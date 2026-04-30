@@ -108,8 +108,8 @@ export default function AdminDocumentsPage() {
         </section>
 
         <p className="text-center text-sm">
-          <Link href="/report/voice" className="font-medium text-primary underline">
-            現場のボイス日報デモへ
+          <Link href="/admin/field-reports" className="font-medium text-primary underline">
+            現場報告確認ページへ
           </Link>
         </p>
       </div>

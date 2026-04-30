@@ -4,16 +4,16 @@ import {
   Bug,
   CalendarClock,
   Camera,
+  ClipboardList,
   MessageSquare,
-  Mic,
 } from "lucide-react";
 import { ModeHeader } from "@/components/layout/mode-header";
 import { DEMO_BRAND } from "@/config/demo-brand";
 
 const flow = [
-  { step: 1, label: "勤怠で出退勤を記録", href: "/report/attendance" },
-  { step: 2, label: "ボイス日報で作業内容を残す", href: "/report/voice" },
-  { step: 3, label: "写真で状況を共有", href: "/report/photo" },
+  { step: 1, label: "日報報告を開く", href: "/report/daily" },
+  { step: 2, label: "報告項目ごとに写真をアップ/撮影", href: "/report/daily" },
+  { step: 3, label: "追加内容をボイス or テキストで送信", href: "/report/daily" },
 ];
 
 const groups: {
@@ -27,7 +27,7 @@ const groups: {
     items: [
       { href: "/report/chat", label: "チャット", icon: MessageSquare },
       { href: "/report/attendance", label: "勤怠（打刻）", icon: CalendarClock },
-      { href: "/report/voice", label: "ボイス日報", icon: Mic },
+      { href: "/report/daily", label: "日報報告（まとめて）", icon: ClipboardList },
     ],
   },
   {
@@ -50,13 +50,7 @@ export default function ReportPage() {
         subtitle={`${DEMO_BRAND.productName}（スマホ）`}
       />
       <main className="mx-auto w-full max-w-md px-4 py-6">
-        <section className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
-          <p className="text-sm text-zinc-600">ログイン中: ryojitomii@gmail.com</p>
-          <p className="text-base font-semibold text-zinc-800">権限: 管理者</p>
-          <p className="text-sm text-zinc-600">導入: {DEMO_BRAND.companyName}</p>
-        </section>
-
-        <section className="mt-5 rounded-xl border border-primary/20 bg-primary-muted/80 p-4">
+        <section className="rounded-xl border border-primary/20 bg-primary-muted/80 p-4">
           <p className="text-sm font-semibold text-zinc-900">おすすめフロー</p>
           <ol className="mt-3 space-y-2">
             {flow.map((item) => (

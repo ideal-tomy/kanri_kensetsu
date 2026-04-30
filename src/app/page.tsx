@@ -25,7 +25,7 @@ export default function Home() {
                 •
               </span>
               <span>
-                <strong>PC管理</strong>:{" "}
+                <strong>管理者として見る</strong>:{" "}
                 <Link href="/admin/assignments" className="text-primary underline">
                   配員最適化
                 </Link>
@@ -44,17 +44,9 @@ export default function Home() {
                 •
               </span>
               <span>
-                <strong>スマホ現場</strong>:{" "}
-                <Link href="/report/attendance" className="text-primary underline">
-                  勤怠
-                </Link>
-                {" → "}
-                <Link href="/report/voice" className="text-primary underline">
-                  ボイス日報
-                </Link>
-                {" → "}
-                <Link href="/report/photo" className="text-primary underline">
-                  写真
+                <strong>現場として見る（スマホ操作）</strong>:{" "}
+                <Link href="/report/daily" className="text-primary underline">
+                  日報一連フロー
                 </Link>
               </span>
             </li>
@@ -66,9 +58,9 @@ export default function Home() {
             >
               <ClipboardCheck className="h-6 w-6 text-primary" aria-hidden />
               <p className="mt-3 text-lg font-semibold text-zinc-900">
-                PC管理ダッシュボード
+                管理者として見る
               </p>
-              <p className="mt-1 text-sm text-zinc-600">/admin</p>
+              <p className="mt-1 text-sm text-zinc-600">監督・判断・承認（PC）</p>
               <span className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-primary">
                 開く <ArrowRight className="h-4 w-4" aria-hidden />
               </span>
@@ -79,9 +71,9 @@ export default function Home() {
             >
               <Smartphone className="h-6 w-6 text-primary" aria-hidden />
               <p className="mt-3 text-lg font-semibold text-zinc-900">
-                スマホ現場報告
+                現場として見る
               </p>
-              <p className="mt-1 text-sm text-zinc-600">/report</p>
+              <p className="mt-1 text-sm text-zinc-600">入力・報告（スマホ）</p>
               <span className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-primary">
                 開く <ArrowRight className="h-4 w-4" aria-hidden />
               </span>

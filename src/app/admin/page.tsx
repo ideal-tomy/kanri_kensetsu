@@ -19,7 +19,7 @@ export default function AdminPage() {
       <ModeHeader
         current="admin"
         title="現場ダッシュボード"
-        subtitle={`${DEMO_BRAND.productName} — 配員・工程・安全書類を統合して確認できます。`}
+        subtitle={`${DEMO_BRAND.productName} — 監督・判断・承認を管理者目線で進める画面です。`}
       />
       <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-6">
         <DemoDisclaimer variant="banner" context="ai" />
@@ -49,6 +49,40 @@ export default function AdminPage() {
             </p>
             <p className="text-sm text-zinc-600">施工不良検知を含む</p>
           </div>
+        </section>
+
+        <section className="rounded-xl border border-primary/20 bg-primary-muted/80 p-4 shadow-sm">
+          <h2 className="text-lg font-semibold text-zinc-900">本日の管理フロー</h2>
+          <ol className="mt-3 grid gap-3 md:grid-cols-3">
+            <li className="rounded-lg border border-zinc-200 bg-white p-3">
+              <p className="text-xs text-zinc-500">STEP 1</p>
+              <Link href="/admin/alerts" className="font-semibold text-primary underline">
+                アラート確認
+              </Link>
+              <p className="mt-1 text-sm text-zinc-600">優先度の高い通知から対応</p>
+            </li>
+            <li className="rounded-lg border border-zinc-200 bg-white p-3">
+              <p className="text-xs text-zinc-500">STEP 2</p>
+              <Link href="/admin/assignments" className="font-semibold text-primary underline">
+                配員判断
+              </Link>
+              <p className="mt-1 text-sm text-zinc-600">AIアラームを見て確定</p>
+            </li>
+            <li className="rounded-lg border border-zinc-200 bg-white p-3">
+              <p className="text-xs text-zinc-500">STEP 3</p>
+              <Link href="/admin/documents" className="font-semibold text-primary underline">
+                書類確定
+              </Link>
+              <p className="mt-1 text-sm text-zinc-600">現場報告を最終アウトプット化</p>
+            </li>
+          </ol>
+          <p className="mt-3 text-xs text-zinc-600">
+            現場入力の確認は{" "}
+            <Link href="/admin/field-reports" className="font-medium text-primary underline">
+              現場報告確認
+            </Link>
+            でまとめて実施できます。
+          </p>
         </section>
 
         <AdminCards />
