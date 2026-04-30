@@ -1,0 +1,60 @@
+import type { ScheduleTask } from "@/types/domain";
+
+export const scheduleTasks: ScheduleTask[] = [
+  {
+    id: "st-p1-1",
+    projectId: "p1",
+    label: "枠・サッシ搬入",
+    startOffsetPercent: 0,
+    widthPercent: 18,
+    status: "done",
+  },
+  {
+    id: "st-p1-2",
+    projectId: "p1",
+    label: "建具取付",
+    startOffsetPercent: 18,
+    widthPercent: 42,
+    status: "in_progress",
+  },
+  {
+    id: "st-p1-3",
+    projectId: "p1",
+    label: "調整・色合わせ",
+    startOffsetPercent: 55,
+    widthPercent: 22,
+    status: "planned",
+  },
+  {
+    id: "st-p1-4",
+    projectId: "p1",
+    label: "引渡し・書類",
+    startOffsetPercent: 78,
+    widthPercent: 22,
+    status: "planned",
+  },
+  {
+    id: "st-p2-1",
+    projectId: "p2",
+    label: "解体・下地",
+    startOffsetPercent: 0,
+    widthPercent: 35,
+    status: "done",
+  },
+  {
+    id: "st-p2-2",
+    projectId: "p2",
+    label: "仕上・検査",
+    startOffsetPercent: 35,
+    widthPercent: 40,
+    status: "in_progress",
+  },
+  {
+    id: "st-p2-3",
+    projectId: "p2",
+    label: "完了処理",
+    startOffsetPercent: 75,
+    widthPercent: 25,
+    status: "planned",
+  },
+];

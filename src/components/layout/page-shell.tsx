@@ -43,9 +43,9 @@ export function PageShell({
         <div className="fixed bottom-4 left-1/2 z-20 -translate-x-1/2">
           <Link
             href="/report"
-            className="rounded-full bg-zinc-900 px-5 py-3 text-sm font-semibold text-white shadow-lg"
+            className="rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-lg"
           >
-            reportホームへ
+            現場メニューへ
           </Link>
         </div>
       ) : null}

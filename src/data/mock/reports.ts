@@ -115,4 +115,23 @@ export const aiLogs: AiLog[] = [
     relatedEntityType: "defectReport",
     relatedEntityId: "df1",
   },
+  {
+    id: "log3",
+    timestamp: "2026-04-29T07:55:00+09:00",
+    type: "assignment",
+    message:
+      "配員候補を照合: 松本 → 梅田商業ビル（予定）で履歴メモ inc-w1-1 に該当。配置確認ダイアログを推奨",
+    relatedEntityType: "assignment",
+    relatedEntityId: "a4",
+    meta: { incidentNoteId: "inc-w1-1" },
+  },
+  {
+    id: "log4",
+    timestamp: "2026-04-29T17:15:00+09:00",
+    type: "summary",
+    message:
+      "ボイス日報と写真タグから現場報告書の下書き段落を生成（要確認チェックリスト付き）",
+    relatedEntityType: "generatedReport",
+    relatedEntityId: "grp1",
+  },
 ];

@@ -46,7 +46,7 @@ export default function ReportPhotoPage() {
           <p>デモ例: {todayName}</p>
           {originalName ? <p className="mt-2">元ファイル: {originalName}</p> : null}
           {renamed ? (
-            <p className="font-semibold text-orange-700">自動リネーム後: {renamed}</p>
+            <p className="font-semibold text-primary">自動リネーム後: {renamed}</p>
           ) : null}
         </section>
 

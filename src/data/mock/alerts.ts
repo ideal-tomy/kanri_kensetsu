@@ -11,6 +11,13 @@ export const alertNotifications: AlertNotification[] = [
     isRead: false,
     source: "ai",
     linkedDefectReportId: "df1",
+    aiEvidence: {
+      ruleLabel: "画像解析 × 過去不具合パターン",
+      incidentNoteId: undefined,
+      matchedKeywords: ["隙間", "下端", "建具"],
+      detail:
+        "報告写真のタグ「是正前」「傷確認」と類似案件の不良ログを参照し、規定値逸脱の疑いを検知（デモ）。",
+    },
   },
   {
     id: "al2",

@@ -22,7 +22,7 @@ export default function ReportDefectsPage() {
         />
         <button
           type="button"
-          className="w-full rounded-xl bg-orange-600 py-3 font-semibold text-white"
+          className="w-full rounded-xl bg-primary py-3 font-semibold text-primary-foreground"
           onClick={() => setSent(true)}
         >
           アラート送信

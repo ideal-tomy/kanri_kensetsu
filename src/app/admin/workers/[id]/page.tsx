@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { AlertTriangle } from "lucide-react";
 import { PageShell } from "@/components/layout/page-shell";
+import { DemoDisclaimer } from "@/components/layout/demo-disclaimer";
 import { assignments, projects, workerProfiles, workers } from "@/data/mock";
 
 interface Props {
@@ -141,6 +142,8 @@ export default async function WorkerDetailPage({ params }: Props) {
             ))}
           </ul>
         </section>
+
+        <DemoDisclaimer variant="banner" context="data" />
       </div>
     </PageShell>
   );

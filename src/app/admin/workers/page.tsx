@@ -33,7 +33,7 @@ export default function WorkersPage() {
             <Link
               key={worker.id}
               href={`/admin/workers/${worker.id}`}
-              className="flex flex-col rounded-xl border border-zinc-200 bg-white p-4 shadow-sm transition hover:border-orange-200 hover:shadow-md"
+              className="flex flex-col rounded-xl border border-zinc-200 bg-white p-4 shadow-sm transition hover:border-primary/40 hover:shadow-md"
             >
               <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">
                 担当現場

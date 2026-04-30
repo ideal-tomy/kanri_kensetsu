@@ -92,6 +92,11 @@ export interface Assignment {
   aiScore?: number;
   aiReason?: string;
   manualOverrideReason?: string;
+  /** トラブル履歴照合による配置アラーム（デモ） */
+  dispatchAlarmLevel?: "none" | "warning" | "critical";
+  linkedIncidentNoteId?: string;
+  alarmRuleLabel?: string;
+  alarmEvidence?: string;
 }
 
 export interface DispatchProgress {
@@ -175,6 +180,13 @@ export interface AiLog {
   meta?: Record<string, string | number>;
 }
 
+export interface AlertAiEvidence {
+  ruleLabel: string;
+  incidentNoteId?: string;
+  matchedKeywords?: string[];
+  detail: string;
+}
+
 export interface AlertNotification {
   id: string;
   projectId: string;
@@ -185,6 +197,7 @@ export interface AlertNotification {
   isRead: boolean;
   source?: "ai" | "manual";
   linkedDefectReportId?: string;
+  aiEvidence?: AlertAiEvidence;
 }
 
 export interface RevenueForecast {
@@ -205,4 +218,59 @@ export interface KnowledgeItem {
   summary: string;
   body?: string;
   relatedProjectIds?: string[];
+}
+
+/** 現場・事務所チャット（デモ） */
+export interface ChatThread {
+  id: string;
+  projectId: string;
+  title: string;
+  updatedAt: string;
+}
+
+export interface ChatMessage {
+  id: string;
+  threadId: string;
+  authorLabel: string;
+  body: string;
+  sentAt: string;
+  side: "office" | "field";
+}
+
+export interface AttendanceRecord {
+  id: string;
+  workerId: string;
+  projectId: string;
+  date: string;
+  clockIn: string;
+  clockOut?: string;
+  breakMin?: number;
+}
+
+/** 工程スケジュールのバー表示用（デモ） */
+export interface ScheduleTask {
+  id: string;
+  projectId: string;
+  label: string;
+  startOffsetPercent: number;
+  widthPercent: number;
+  status: "done" | "in_progress" | "planned";
+}
+
+export interface LaborCostLine {
+  id: string;
+  projectId: string;
+  roleLabel: string;
+  personDays: number;
+  unitCostYen: number;
+}
+
+export interface GeneratedReportPreview {
+  id: string;
+  projectId: string;
+  kind: "site_daily" | "completion" | "labor_summary";
+  title: string;
+  rawInputSummary: string;
+  aiExpandedDraft: string;
+  reviewChecklist: string[];
 }

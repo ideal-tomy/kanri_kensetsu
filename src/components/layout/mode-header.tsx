@@ -14,7 +14,8 @@ export function ModeHeader({ title, subtitle, current }: ModeHeaderProps) {
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-3">
         <div>
           <p className="text-xs text-zinc-500">
-            {DEMO_BRAND.companyName} {DEMO_BRAND.productName}
+            {DEMO_BRAND.companyName} {DEMO_BRAND.productName}{" "}
+            <span className="font-medium text-primary">{DEMO_BRAND.productCode}</span>
           </p>
           <h1 className="text-lg font-bold text-zinc-900">{title}</h1>
           {subtitle ? <p className="text-sm text-zinc-600">{subtitle}</p> : null}
@@ -24,7 +25,7 @@ export function ModeHeader({ title, subtitle, current }: ModeHeaderProps) {
             href="/admin"
             className={`inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium ${
               current === "admin"
-                ? "bg-orange-600 text-white"
+                ? "bg-primary text-primary-foreground"
                 : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
             }`}
           >
@@ -35,7 +36,7 @@ export function ModeHeader({ title, subtitle, current }: ModeHeaderProps) {
             href="/report"
             className={`inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium ${
               current === "report"
-                ? "bg-orange-600 text-white"
+                ? "bg-primary text-primary-foreground"
                 : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
             }`}
           >

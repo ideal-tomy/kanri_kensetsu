@@ -127,6 +127,22 @@ export const assignments: Assignment[] = [
     aiReason: "写真記録と是正の実績あり",
     manualOverrideReason: "急遽安全パトロール対応",
   },
+  {
+    id: "a4",
+    projectId: "p2",
+    workerId: "w1",
+    date: "2026-04-30",
+    shift: "day",
+    assignedBy: "u1",
+    assignmentStatus: "planned",
+    aiScore: 71,
+    aiReason: "スキルは適合するが履歴照合で要注意",
+    dispatchAlarmLevel: "warning",
+    linkedIncidentNoteId: "inc-w1-1",
+    alarmRuleLabel: "上請け連携リスク（履歴メモ照合）",
+    alarmEvidence:
+      "メモ inc-w1-1: 上請けとの連絡チャネルで齟齬の記録あり。梅田案件（p2）は同一上請け系列の可能性（デモルール）。キーワード: 上請け・指示齟齬",
+  },
 ];
 
 export const dispatchProgresses: DispatchProgress[] = [
