@@ -260,17 +260,214 @@ const initialAssignments: Assignment[] = seedAssigns.flatMap((seed) =>
   })),
 );
 
+const hoursAgoIso = (h: number): string => {
+  const d = new Date();
+  d.setMinutes(d.getMinutes() - h * 60);
+  return d.toISOString();
+};
+
+const daysAgoIso = (days: number, hour = 9): string => {
+  const d = new Date();
+  d.setDate(d.getDate() - days);
+  d.setHours(hour, 0, 0, 0);
+  return d.toISOString();
+};
+
+const initialPhotoReports: PhotoReport[] = [
+  {
+    id: nextId("photo"),
+    siteId: "site-1",
+    userName: "田中さん",
+    category: "progress",
+    fileName: "exterior_north.jpg",
+    title: "北面 外壁ボード貼り 進捗",
+    note: "10枚目まで完了。明日12枚張り終え予定。",
+    storagePath: "/photos/A邸新築/today/progress/exterior_north.jpg",
+    createdAt: hoursAgoIso(2),
+  },
+  {
+    id: nextId("photo"),
+    siteId: "site-1",
+    userName: "田中さん",
+    category: "regular",
+    fileName: "morning_briefing.jpg",
+    storagePath: "/photos/A邸新築/today/regular/morning_briefing.jpg",
+    createdAt: hoursAgoIso(6),
+  },
+  {
+    id: nextId("photo"),
+    siteId: "site-1",
+    userName: "佐藤さん",
+    category: "progress",
+    fileName: "scaffold_check.jpg",
+    title: "足場の固定確認",
+    note: "金具の緩みなし。",
+    storagePath: "/photos/A邸新築/today/progress/scaffold_check.jpg",
+    createdAt: hoursAgoIso(4),
+  },
+  {
+    id: nextId("photo"),
+    siteId: "site-2",
+    userName: "鈴木さん",
+    category: "regular",
+    fileName: "site_morning.jpg",
+    storagePath: "/photos/Bビル改修/today/regular/site_morning.jpg",
+    createdAt: hoursAgoIso(8),
+  },
+  {
+    id: nextId("photo"),
+    siteId: "site-2",
+    userName: "鈴木さん",
+    category: "progress",
+    fileName: "wall_paint.jpg",
+    title: "1階壁面塗装 完了",
+    note: "想定より早く完了。",
+    storagePath: "/photos/Bビル改修/today/progress/wall_paint.jpg",
+    createdAt: hoursAgoIso(1),
+  },
+  {
+    id: nextId("photo"),
+    siteId: "site-3",
+    userName: "山田さん",
+    category: "regular",
+    fileName: "cmansion_morning.jpg",
+    storagePath: "/photos/Cマンション/today/regular/cmansion_morning.jpg",
+    createdAt: hoursAgoIso(7),
+  },
+  {
+    id: nextId("photo"),
+    siteId: "site-3",
+    userName: "山田さん",
+    category: "progress",
+    fileName: "form_setup.jpg",
+    title: "型枠調整 6/20箇所",
+    storagePath: "/photos/Cマンション/today/progress/form_setup.jpg",
+    createdAt: hoursAgoIso(3),
+  },
+  {
+    id: nextId("photo"),
+    siteId: "site-1",
+    userName: "田中さん",
+    category: "progress",
+    fileName: "yesterday_wall.jpg",
+    title: "外壁ボード貼り 8枚完了",
+    storagePath: "/photos/A邸新築/yesterday/progress/yesterday_wall.jpg",
+    createdAt: daysAgoIso(1, 16),
+  },
+  {
+    id: nextId("photo"),
+    siteId: "site-2",
+    userName: "鈴木さん",
+    category: "progress",
+    fileName: "yesterday_floor.jpg",
+    title: "床仕上げ 2区画完了",
+    storagePath: "/photos/Bビル改修/yesterday/progress/yesterday_floor.jpg",
+    createdAt: daysAgoIso(1, 17),
+  },
+];
+
+const initialTaskUpdates: TaskUpdate[] = [
+  {
+    id: nextId("tu"),
+    taskId: "task-1",
+    userName: "田中さん",
+    qtyDelta: 5,
+    qtyAfter: 18,
+    statusTo: "in_progress",
+    createdAt: hoursAgoIso(2),
+  },
+  {
+    id: nextId("tu"),
+    taskId: "task-1",
+    userName: "佐藤さん",
+    qtyDelta: 3,
+    qtyAfter: 13,
+    statusTo: "in_progress",
+    createdAt: hoursAgoIso(5),
+  },
+  {
+    id: nextId("tu"),
+    taskId: "task-4",
+    userName: "鈴木さん",
+    statusFrom: "in_progress",
+    statusTo: "paused",
+    comment: "rain",
+    qtyAfter: 0,
+    createdAt: hoursAgoIso(3),
+  },
+  {
+    id: nextId("tu"),
+    taskId: "task-5",
+    userName: "山田さん",
+    qtyDelta: 2,
+    qtyAfter: 6,
+    statusTo: "in_progress",
+    createdAt: hoursAgoIso(4),
+  },
+];
+
+const initialNotifications: {
+  id: string;
+  userName: string;
+  title: string;
+  body: string;
+  createdAt: string;
+}[] = [
+  {
+    id: nextId("ntf"),
+    userName: "鈴木さん",
+    title: "雨で作業中断",
+    body: "Bビル改修・足場点検が雨のため中断しました",
+    createdAt: hoursAgoIso(3),
+  },
+  {
+    id: nextId("ntf"),
+    userName: "田中さん",
+    title: "進捗報告が届きました",
+    body: "A邸新築：外壁ボード貼り 10枚完了",
+    createdAt: hoursAgoIso(2),
+  },
+  {
+    id: nextId("ntf"),
+    userName: "山田さん",
+    title: "作業開始",
+    body: "Cマンション 型枠調整に着手",
+    createdAt: hoursAgoIso(7),
+  },
+];
+
+const initialSiteProgressLogs: SiteProgressLog[] = [
+  {
+    id: nextId("spl"),
+    siteId: "site-1",
+    userName: "伊藤監督",
+    progressFrom: 38,
+    progressTo: 42,
+    comment: "外壁施工が進んだため",
+    createdAt: hoursAgoIso(2),
+  },
+  {
+    id: nextId("spl"),
+    siteId: "site-2",
+    userName: "伊藤監督",
+    progressFrom: 65,
+    progressTo: 68,
+    comment: "1階塗装完了",
+    createdAt: hoursAgoIso(1),
+  },
+];
+
 export const state = {
   users: [] as SessionUser[],
   sites: initialSites,
   reports: [] as Report[],
   tasks: initialTasks,
-  taskUpdates: [] as TaskUpdate[],
+  taskUpdates: initialTaskUpdates,
   assignments: initialAssignments,
   assignmentChanges: [] as AssignmentChange[],
-  notifications: [] as { id: string; userName: string; title: string; body: string; createdAt: string }[],
-  siteProgressLogs: [] as SiteProgressLog[],
-  photoReports: [] as PhotoReport[],
+  notifications: initialNotifications,
+  siteProgressLogs: initialSiteProgressLogs,
+  photoReports: initialPhotoReports,
 };
 
 export const demoAccounts: Array<{

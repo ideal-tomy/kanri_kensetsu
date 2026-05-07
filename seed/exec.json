@@ -1,0 +1,39 @@
+{
+  "label": "経営者ダッシュボード",
+  "scenario": "D",
+  "sites": [
+    {
+      "id": "site-1",
+      "name": "完了済み: 心斎橋プロジェクト",
+      "status": "completed",
+      "overallProgress": 100,
+      "startedAt": "2025-11-01",
+      "endedAt": "2026-03-31"
+    },
+    {
+      "id": "site-2",
+      "name": "進行中: なんばパーク改修",
+      "status": "active",
+      "overallProgress": 78,
+      "startedAt": "2026-01-10",
+      "endedAt": "2026-08-15"
+    },
+    {
+      "id": "site-3",
+      "name": "進行中: 京都オフィス棟",
+      "status": "active",
+      "overallProgress": 55,
+      "startedAt": "2026-02-15",
+      "endedAt": "2026-11-30"
+    },
+    {
+      "id": "site-4",
+      "name": "計画: 神戸物流センター",
+      "status": "active",
+      "overallProgress": 12,
+      "startedAt": "2026-04-20",
+      "endedAt": "2026-12-25"
+    }
+  ],
+  "photoVolumeHint": "売上見込みデータが豊富・KPI重視"
+}

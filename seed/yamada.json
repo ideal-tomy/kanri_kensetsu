@@ -1,0 +1,31 @@
+{
+  "label": "山田建設工業（戸建メイン）",
+  "scenario": "A",
+  "sites": [
+    {
+      "id": "site-1",
+      "name": "A邸新築",
+      "status": "active",
+      "overallProgress": 42,
+      "startedAt": "2026-04-01",
+      "endedAt": "2026-08-31"
+    },
+    {
+      "id": "site-2",
+      "name": "Bビル改修",
+      "status": "active",
+      "overallProgress": 68,
+      "startedAt": "2026-03-15",
+      "endedAt": "2026-09-30"
+    },
+    {
+      "id": "site-3",
+      "name": "Cマンション",
+      "status": "active",
+      "overallProgress": 15,
+      "startedAt": "2026-04-20",
+      "endedAt": "2026-11-30"
+    }
+  ],
+  "photoVolumeHint": "定例多め・進捗少なめ"
+}

@@ -1,0 +1,47 @@
+{
+  "label": "佐藤工務店（ビル改修中心）",
+  "scenario": "B",
+  "sites": [
+    {
+      "id": "site-1",
+      "name": "中之島タワー改修",
+      "status": "active",
+      "overallProgress": 55,
+      "startedAt": "2026-02-10",
+      "endedAt": "2026-12-20"
+    },
+    {
+      "id": "site-2",
+      "name": "梅田北口ビル",
+      "status": "active",
+      "overallProgress": 38,
+      "startedAt": "2026-03-01",
+      "endedAt": "2026-10-15"
+    },
+    {
+      "id": "site-3",
+      "name": "本町オフィスB館",
+      "status": "active",
+      "overallProgress": 72,
+      "startedAt": "2026-01-15",
+      "endedAt": "2026-07-30"
+    },
+    {
+      "id": "site-4",
+      "name": "天王寺商業棟",
+      "status": "active",
+      "overallProgress": 22,
+      "startedAt": "2026-04-05",
+      "endedAt": "2026-12-31"
+    },
+    {
+      "id": "site-5",
+      "name": "新大阪駅ビル改修",
+      "status": "active",
+      "overallProgress": 60,
+      "startedAt": "2026-02-20",
+      "endedAt": "2026-09-30"
+    }
+  ],
+  "photoVolumeHint": "夜勤シフト含む・配員変更履歴多め"
+}

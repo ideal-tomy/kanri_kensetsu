@@ -1,0 +1,24 @@
+{
+  "label": "安全管理重視（書類提出 100% を目指す元請）",
+  "scenario": "C",
+  "sites": [
+    {
+      "id": "site-1",
+      "name": "A邸新築",
+      "status": "active",
+      "overallProgress": 42,
+      "startedAt": "2026-04-01",
+      "endedAt": "2026-08-31"
+    },
+    {
+      "id": "site-2",
+      "name": "Bビル改修",
+      "status": "active",
+      "overallProgress": 30,
+      "startedAt": "2026-03-15",
+      "endedAt": "2026-09-30"
+    }
+  ],
+  "photoVolumeHint": "未提出書類多め・AIアラート複数",
+  "missingSafetyDocs": ["KY活動報告", "新規入場者名簿"]
+}

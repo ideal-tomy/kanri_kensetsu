@@ -5,6 +5,7 @@ import {
   getPhotoReportsForUser,
   type PhotoCategory,
 } from "@/lib/prototype-store";
+import { shadowInsertPhotoReport } from "@/lib/db/photo-reports";
 
 const VALID_CATEGORIES: PhotoCategory[] = ["regular", "progress"];
 
@@ -52,6 +53,11 @@ export async function POST(request: Request) {
     fileName: body.fileName.trim(),
     title: body.title?.trim(),
     note: body.note?.trim(),
+  });
+
+  // shadow write: Supabase 設定がある場合のみ送る。失敗してもアプリは止めない。
+  shadowInsertPhotoReport(photo).catch((error) => {
+    console.error("shadowInsertPhotoReport failed", error);
   });
 
   return NextResponse.json({ photo });
