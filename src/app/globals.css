@@ -22,3 +22,13 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
 }
+
+.worker-readable {
+  color: #18181b;
+  font-weight: 700;
+}
+
+.worker-subtext {
+  color: #27272a;
+  font-weight: 600;
+}

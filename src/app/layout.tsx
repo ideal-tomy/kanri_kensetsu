@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "現場ポケット（GEMPO）デモ | 〇〇工業向け",
-  description:
-    "現場と事務所をつなぐ建設向け統合デモ。チャット・勤怠・日報・写真・配員アラーム・報告書下書きを一覧できます。",
+  title: "GENBA NOTE",
+  description: "現場と事務所の情報ズレをなくす現場ナレッジ管理ツール",
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
