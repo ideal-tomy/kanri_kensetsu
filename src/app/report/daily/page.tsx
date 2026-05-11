@@ -27,7 +27,7 @@ export default function DailyReportPage() {
 
   const handlePick = (itemLabel: string, file?: File) => {
     if (!file) return;
-    const autoName = generateAutoPhotoName("大阪現場", itemLabel);
+    const autoName = generateAutoPhotoName("新宿現場", itemLabel);
     const folder = `drive://gempo/p1/daily/${itemLabel.replaceAll("・", "-")}/`;
     setUploaded((prev) => ({ ...prev, [itemLabel]: autoName }));
     setToast(
@@ -78,7 +78,7 @@ export default function DailyReportPage() {
                 </label>
               </div>
               <p className="mt-2 text-xs text-zinc-600">
-                命名: {DEMO_BRAND.companyName}_大阪現場_YYYYMMDD_{item.label}.jpg
+                命名: {DEMO_BRAND.companyName}_新宿現場_YYYYMMDD_{item.label}.jpg
               </p>
               {uploaded[item.label] ? (
                 <p className="mt-1 text-sm font-semibold text-primary">

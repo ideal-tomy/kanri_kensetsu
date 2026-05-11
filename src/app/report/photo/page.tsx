@@ -11,13 +11,13 @@ export default function ReportPhotoPage() {
   const [toast, setToast] = useState("");
 
   const todayName = useMemo(
-    () => generateAutoPhotoName("大阪現場", "完了", new Date("2026-04-29")),
+    () => generateAutoPhotoName("新宿現場", "完了", new Date("2026-04-29")),
     [],
   );
 
   const handleFile = (file?: File) => {
     if (!file) return;
-    const autoName = generateAutoPhotoName("大阪現場", "完了");
+    const autoName = generateAutoPhotoName("新宿現場", "完了");
     setOriginalName(file.name);
     setRenamed(autoName);
     setToast(`AIが ${autoName} に自動変更し、Google Driveへ保存しました`);

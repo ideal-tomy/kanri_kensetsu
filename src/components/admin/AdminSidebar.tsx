@@ -5,19 +5,23 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   AlertTriangle,
+  AlertCircle,
   BarChart3,
   Bell,
   BookOpen,
   Briefcase,
+  Building2,
   Calendar,
   Camera,
   ChevronDown,
   ChevronRight,
   ClipboardCheck,
   FileText,
+  FolderCog,
   Gauge,
   Handshake,
   HardHat,
+  Home,
   Layers,
   type LucideIcon,
   MapPin,
@@ -62,7 +66,18 @@ const NAV_GROUPS: NavGroup[] = [
     links: [
       { href: "/admin/field-reports", label: "現場報告確認", icon: ClipboardCheck },
       { href: "/admin/reports/photos", label: "施工写真", icon: Camera },
+      { href: "/admin/reports/output", label: "報告書出力", icon: FileText },
+      { href: "/admin/demo/exterior-sash", label: "外壁サッシ詰まりデモ", icon: AlertCircle },
       { href: "/admin/safety-docs", label: "安全書類", icon: ShieldCheck },
+    ],
+  },
+  {
+    id: "master",
+    label: "マスタ",
+    links: [
+      { href: "/admin/master/clients", label: "取引先", icon: Building2 },
+      { href: "/admin/master/end-customers", label: "施主", icon: Home },
+      { href: "/admin/master/report-templates", label: "報告書テンプレ", icon: FolderCog },
     ],
   },
   {

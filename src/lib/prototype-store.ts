@@ -1,4 +1,9 @@
 import { parseReport } from "@/lib/parser/report";
+import {
+  buildAutoFileName,
+  buildDemoStoragePath,
+  getExteriorSashConfig,
+} from "@/lib/demo/exterior-sash-rules";
 import type { AppRole, SessionUser } from "@/lib/auth/session";
 
 export type UserRole = AppRole;
@@ -36,6 +41,22 @@ export type Report = {
   status: "draft" | "sent";
 };
 
+export type AutoProgressSource = "manual" | "photo_count";
+
+export type PhaseProgressMode = "auto" | "manual";
+
+export type ProjectPhase = {
+  id: string;
+  siteId: string;
+  name: string;
+  displayOrder: number;
+  color?: string;
+  plannedStartDate?: string;
+  plannedEndDate?: string;
+  progressPct: number;
+  progressMode: PhaseProgressMode;
+};
+
 export type Task = {
   id: string;
   siteId: string;
@@ -48,6 +69,8 @@ export type Task = {
   todayTargetQty?: number;
   pausedReason?: PauseReason;
   updatedAt: string;
+  phaseId?: string;
+  autoProgressSource?: AutoProgressSource;
 };
 
 export type TaskUpdate = {
@@ -102,6 +125,10 @@ export type PhotoReport = {
   note?: string;
   storagePath: string;
   createdAt: string;
+  /** 外壁・サッシデモ：報告書の写真枠ID */
+  photoSlotId?: string;
+  phaseId?: string;
+  phaseLabel?: string;
 };
 
 let idSeq = 100;
@@ -121,11 +148,80 @@ const dayOffset = (offset: number): string => {
   return monday.toISOString().slice(0, 10);
 };
 
+const initialPhases: ProjectPhase[] = [
+  {
+    id: "phase-s1-1",
+    siteId: "site-1",
+    name: "基礎工事",
+    displayOrder: 1,
+    color: "#2563eb",
+    plannedStartDate: "2026-04-01",
+    plannedEndDate: "2026-04-30",
+    progressPct: 100,
+    progressMode: "auto",
+  },
+  {
+    id: "phase-s1-2",
+    siteId: "site-1",
+    name: "躯体工事",
+    displayOrder: 2,
+    color: "#ea580c",
+    plannedStartDate: "2026-05-01",
+    plannedEndDate: "2026-06-30",
+    progressPct: 51,
+    progressMode: "auto",
+  },
+  {
+    id: "phase-s1-3",
+    siteId: "site-1",
+    name: "内装工事",
+    displayOrder: 3,
+    color: "#16a34a",
+    plannedStartDate: "2026-07-01",
+    plannedEndDate: "2026-08-15",
+    progressPct: 0,
+    progressMode: "auto",
+  },
+  {
+    id: "phase-es1-sash",
+    siteId: "site-es-1",
+    name: "サッシ取付",
+    displayOrder: 1,
+    color: "#ea580c",
+    plannedStartDate: "2026-05-01",
+    plannedEndDate: "2026-05-15",
+    progressPct: 60,
+    progressMode: "manual",
+  },
+  {
+    id: "phase-es2-wall",
+    siteId: "site-es-2",
+    name: "外壁補修",
+    displayOrder: 1,
+    color: "#2563eb",
+    plannedStartDate: "2026-04-10",
+    plannedEndDate: "2026-07-20",
+    progressPct: 35,
+    progressMode: "manual",
+  },
+  {
+    id: "phase-es3-cw",
+    siteId: "site-es-3",
+    name: "カーテンウォール確認",
+    displayOrder: 1,
+    color: "#059669",
+    plannedStartDate: "2026-05-05",
+    plannedEndDate: "2026-05-18",
+    progressPct: 80,
+    progressMode: "manual",
+  },
+];
+
 const initialSites: Site[] = [
   {
     id: "site-1",
     companyCode: "YMD35",
-    name: "A邸新築",
+    name: "新宿駅西口再開発A棟",
     status: "active",
     startedAt: "2026-04-01",
     endedAt: "2026-08-31",
@@ -134,7 +230,7 @@ const initialSites: Site[] = [
   {
     id: "site-2",
     companyCode: "YMD35",
-    name: "Bビル改修",
+    name: "大手町オフィスタワー改修",
     status: "active",
     startedAt: "2026-03-15",
     endedAt: "2026-09-30",
@@ -143,11 +239,38 @@ const initialSites: Site[] = [
   {
     id: "site-3",
     companyCode: "YMD35",
-    name: "Cマンション",
+    name: "豊洲オフィスレジデンス",
     status: "active",
     startedAt: "2026-04-20",
     endedAt: "2026-11-30",
     overallProgress: 15,
+  },
+  {
+    id: "site-es-1",
+    companyCode: "YMD35",
+    name: "山田邸 サッシ交換工事",
+    status: "active",
+    startedAt: "2026-05-01",
+    endedAt: "2026-06-30",
+    overallProgress: 60,
+  },
+  {
+    id: "site-es-2",
+    companyCode: "YMD35",
+    name: "青葉マンション 外壁補修",
+    status: "active",
+    startedAt: "2026-04-10",
+    endedAt: "2026-07-31",
+    overallProgress: 35,
+  },
+  {
+    id: "site-es-3",
+    companyCode: "YMD35",
+    name: "中央ビル カーテンウォール点検",
+    status: "active",
+    startedAt: "2026-05-05",
+    endedAt: "2026-05-20",
+    overallProgress: 80,
   },
 ];
 
@@ -163,6 +286,8 @@ const initialTasks: Task[] = [
     actualQty: 18,
     todayTargetQty: 12,
     updatedAt: todayIso(),
+    phaseId: "phase-s1-2",
+    autoProgressSource: "photo_count",
   },
   {
     id: "task-2",
@@ -174,6 +299,8 @@ const initialTasks: Task[] = [
     plannedQty: 120,
     actualQty: 120,
     updatedAt: todayIso(),
+    phaseId: "phase-s1-1",
+    autoProgressSource: "manual",
   },
   {
     id: "task-3",
@@ -185,6 +312,8 @@ const initialTasks: Task[] = [
     plannedQty: 80,
     actualQty: 0,
     updatedAt: todayIso(),
+    phaseId: "phase-s1-3",
+    autoProgressSource: "manual",
   },
   {
     id: "task-4",
@@ -221,44 +350,69 @@ const seedAssigns: SeedAssign[] = [
   {
     userName: "田中さん",
     siteId: "site-1",
-    siteName: "A邸新築",
+    siteName: "新宿駅西口再開発A棟",
     shift: "day_full",
     days: [0, 1, 3, 4],
   },
   {
     userName: "佐藤さん",
     siteId: "site-1",
-    siteName: "A邸新築",
+    siteName: "新宿駅西口再開発A棟",
     shift: "day_full",
     days: [0, 1, 3],
   },
   {
     userName: "鈴木さん",
     siteId: "site-2",
-    siteName: "Bビル改修",
+    siteName: "大手町オフィスタワー改修",
     shift: "night_full",
     days: [0, 1, 2, 4, 5],
   },
   {
     userName: "山田さん",
     siteId: "site-3",
-    siteName: "Cマンション",
+    siteName: "豊洲オフィスレジデンス",
     shift: "day_full",
     days: [1, 2, 3, 4],
   },
 ];
 
-const initialAssignments: Assignment[] = seedAssigns.flatMap((seed) =>
-  seed.days.map((d) => ({
+/** デモ用：同一パターンを複数週に繰り返し（来週ナビでもセルが埋まる） */
+const ASSIGNMENT_WEEK_OFFSETS = [-1, 0, 1, 2];
+
+export type AssignmentUpdatePatch = {
+  siteId?: string;
+  shift?: ShiftType;
+  workDate?: string;
+  status?: AssignmentStatus;
+  /** 現場変更時に assignmentChanges へ記録 */
+  reason?: string;
+};
+
+const initialAssignments: Assignment[] = [
+  ...ASSIGNMENT_WEEK_OFFSETS.flatMap((weekOffset) =>
+    seedAssigns.flatMap((seed) =>
+      seed.days.map((d) => ({
+        id: nextId("as"),
+        userName: seed.userName,
+        siteId: seed.siteId,
+        siteName: seed.siteName,
+        workDate: dayOffset(d + weekOffset * 7),
+        shift: seed.shift,
+        status: "planned" as AssignmentStatus,
+      })),
+    ),
+  ),
+  {
     id: nextId("as"),
-    userName: seed.userName,
-    siteId: seed.siteId,
-    siteName: seed.siteName,
-    workDate: dayOffset(d),
-    shift: seed.shift,
-    status: "planned" as AssignmentStatus,
-  })),
-);
+    userName: "佐藤さん",
+    siteId: "site-es-1",
+    siteName: "山田邸 サッシ交換工事",
+    workDate: new Date().toISOString().slice(0, 10),
+    shift: "day_full",
+    status: "planned",
+  },
+];
 
 const hoursAgoIso = (h: number): string => {
   const d = new Date();
@@ -282,7 +436,7 @@ const initialPhotoReports: PhotoReport[] = [
     fileName: "exterior_north.jpg",
     title: "北面 外壁ボード貼り 進捗",
     note: "10枚目まで完了。明日12枚張り終え予定。",
-    storagePath: "/photos/A邸新築/today/progress/exterior_north.jpg",
+    storagePath: "/photos/新宿駅西口再開発A棟/today/progress/exterior_north.jpg",
     createdAt: hoursAgoIso(2),
   },
   {
@@ -291,7 +445,7 @@ const initialPhotoReports: PhotoReport[] = [
     userName: "田中さん",
     category: "regular",
     fileName: "morning_briefing.jpg",
-    storagePath: "/photos/A邸新築/today/regular/morning_briefing.jpg",
+    storagePath: "/photos/新宿駅西口再開発A棟/today/regular/morning_briefing.jpg",
     createdAt: hoursAgoIso(6),
   },
   {
@@ -302,7 +456,7 @@ const initialPhotoReports: PhotoReport[] = [
     fileName: "scaffold_check.jpg",
     title: "足場の固定確認",
     note: "金具の緩みなし。",
-    storagePath: "/photos/A邸新築/today/progress/scaffold_check.jpg",
+    storagePath: "/photos/新宿駅西口再開発A棟/today/progress/scaffold_check.jpg",
     createdAt: hoursAgoIso(4),
   },
   {
@@ -311,7 +465,7 @@ const initialPhotoReports: PhotoReport[] = [
     userName: "鈴木さん",
     category: "regular",
     fileName: "site_morning.jpg",
-    storagePath: "/photos/Bビル改修/today/regular/site_morning.jpg",
+    storagePath: "/photos/大手町オフィスタワー改修/today/regular/site_morning.jpg",
     createdAt: hoursAgoIso(8),
   },
   {
@@ -322,7 +476,7 @@ const initialPhotoReports: PhotoReport[] = [
     fileName: "wall_paint.jpg",
     title: "1階壁面塗装 完了",
     note: "想定より早く完了。",
-    storagePath: "/photos/Bビル改修/today/progress/wall_paint.jpg",
+    storagePath: "/photos/大手町オフィスタワー改修/today/progress/wall_paint.jpg",
     createdAt: hoursAgoIso(1),
   },
   {
@@ -331,7 +485,7 @@ const initialPhotoReports: PhotoReport[] = [
     userName: "山田さん",
     category: "regular",
     fileName: "cmansion_morning.jpg",
-    storagePath: "/photos/Cマンション/today/regular/cmansion_morning.jpg",
+    storagePath: "/photos/豊洲オフィスレジデンス/today/regular/cmansion_morning.jpg",
     createdAt: hoursAgoIso(7),
   },
   {
@@ -341,7 +495,7 @@ const initialPhotoReports: PhotoReport[] = [
     category: "progress",
     fileName: "form_setup.jpg",
     title: "型枠調整 6/20箇所",
-    storagePath: "/photos/Cマンション/today/progress/form_setup.jpg",
+    storagePath: "/photos/豊洲オフィスレジデンス/today/progress/form_setup.jpg",
     createdAt: hoursAgoIso(3),
   },
   {
@@ -351,7 +505,7 @@ const initialPhotoReports: PhotoReport[] = [
     category: "progress",
     fileName: "yesterday_wall.jpg",
     title: "外壁ボード貼り 8枚完了",
-    storagePath: "/photos/A邸新築/yesterday/progress/yesterday_wall.jpg",
+    storagePath: "/photos/新宿駅西口再開発A棟/yesterday/progress/yesterday_wall.jpg",
     createdAt: daysAgoIso(1, 16),
   },
   {
@@ -361,8 +515,120 @@ const initialPhotoReports: PhotoReport[] = [
     category: "progress",
     fileName: "yesterday_floor.jpg",
     title: "床仕上げ 2区画完了",
-    storagePath: "/photos/Bビル改修/yesterday/progress/yesterday_floor.jpg",
+    storagePath: "/photos/大手町オフィスタワー改修/yesterday/progress/yesterday_floor.jpg",
     createdAt: daysAgoIso(1, 17),
+  },
+  {
+    id: nextId("photo"),
+    siteId: "site-es-1",
+    userName: "佐藤さん",
+    category: "progress",
+    fileName: "2026-05-09_山田邸_サッシ取付_施工前_佐藤.jpg",
+    title: "施工前（サッシ取付）",
+    storagePath:
+      "/外壁サッシ/山田邸/サッシ取付/施工前/2026-05-09/2026-05-09_山田邸_サッシ取付_施工前_佐藤.jpg",
+    createdAt: hoursAgoIso(6),
+    photoSlotId: "before",
+    phaseId: "phase-es1-sash",
+    phaseLabel: "サッシ取付",
+  },
+  {
+    id: nextId("photo"),
+    siteId: "site-es-1",
+    userName: "佐藤さん",
+    category: "progress",
+    fileName: "2026-05-09_山田邸_サッシ取付_寸法確認_佐藤.jpg",
+    title: "寸法確認（サッシ取付）",
+    storagePath:
+      "/外壁サッシ/山田邸/サッシ取付/寸法確認/2026-05-09/2026-05-09_山田邸_サッシ取付_寸法確認_佐藤.jpg",
+    createdAt: hoursAgoIso(5),
+    photoSlotId: "measure",
+    phaseId: "phase-es1-sash",
+    phaseLabel: "サッシ取付",
+  },
+  {
+    id: nextId("photo"),
+    siteId: "site-es-1",
+    userName: "田中さん",
+    category: "progress",
+    fileName: "2026-05-09_山田邸_サッシ取付_搬入状態_田中.jpg",
+    title: "搬入状態（サッシ取付）",
+    storagePath:
+      "/外壁サッシ/山田邸/サッシ取付/搬入状態/2026-05-09/2026-05-09_山田邸_サッシ取付_搬入状態_田中.jpg",
+    createdAt: hoursAgoIso(4),
+    photoSlotId: "delivery",
+    phaseId: "phase-es1-sash",
+    phaseLabel: "サッシ取付",
+  },
+  {
+    id: nextId("photo"),
+    siteId: "site-es-2",
+    userName: "鈴木さん",
+    category: "progress",
+    fileName: "2026-05-08_青葉マンション_外壁補修_施工前_鈴木.jpg",
+    title: "施工前（外壁補修）",
+    storagePath:
+      "/外壁サッシ/青葉マンション/外壁補修/施工前/2026-05-08/2026-05-08_青葉マンション_外壁補修_施工前_鈴木.jpg",
+    createdAt: hoursAgoIso(20),
+    photoSlotId: "before",
+    phaseId: "phase-es2-wall",
+    phaseLabel: "外壁補修",
+  },
+  {
+    id: nextId("photo"),
+    siteId: "site-es-3",
+    userName: "田中さん",
+    category: "progress",
+    fileName: "2026-05-09_中央ビル_CW確認_施工前全景_田中.jpg",
+    title: "施工前全景（カーテンウォール確認）",
+    storagePath:
+      "/外壁サッシ/中央ビル/カーテンウォール確認/施工前全景/2026-05-09/2026-05-09_中央ビル_CW確認_施工前全景_田中.jpg",
+    createdAt: hoursAgoIso(8),
+    photoSlotId: "before",
+    phaseId: "phase-es3-cw",
+    phaseLabel: "カーテンウォール確認",
+  },
+  {
+    id: nextId("photo"),
+    siteId: "site-es-3",
+    userName: "田中さん",
+    category: "progress",
+    fileName: "2026-05-09_中央ビル_CW確認_アンカー確認_田中.jpg",
+    title: "アンカー確認（カーテンウォール確認）",
+    storagePath:
+      "/外壁サッシ/中央ビル/カーテンウォール確認/アンカー確認/2026-05-09/2026-05-09_中央ビル_CW確認_アンカー確認_田中.jpg",
+    createdAt: hoursAgoIso(7),
+    photoSlotId: "anchor",
+    phaseId: "phase-es3-cw",
+    phaseLabel: "カーテンウォール確認",
+  },
+  {
+    id: nextId("photo"),
+    siteId: "site-es-3",
+    userName: "田中さん",
+    category: "progress",
+    fileName: "2026-05-09_中央ビル_CW確認_ガラス面_田中.jpg",
+    title: "ガラス面（カーテンウォール確認）",
+    storagePath:
+      "/外壁サッシ/中央ビル/カーテンウォール確認/ガラス面/2026-05-09/2026-05-09_中央ビル_CW確認_ガラス面_田中.jpg",
+    createdAt: hoursAgoIso(6),
+    photoSlotId: "glass",
+    phaseId: "phase-es3-cw",
+    phaseLabel: "カーテンウォール確認",
+  },
+  {
+    id: nextId("photo"),
+    siteId: "site-es-3",
+    userName: "田中さん",
+    category: "progress",
+    fileName: "2026-05-09_中央ビル_CW確認_シーリング_田中.jpg",
+    title: "シーリング（カーテンウォール確認）",
+    storagePath:
+      "/外壁サッシ/中央ビル/カーテンウォール確認/シーリング/2026-05-09/2026-05-09_中央ビル_CW確認_シーリング_田中.jpg",
+    createdAt: hoursAgoIso(5),
+    photoSlotId: "seal",
+    phaseId: "phase-es3-cw",
+    phaseLabel: "カーテンウォール確認",
   },
 ];
 
@@ -417,21 +683,21 @@ const initialNotifications: {
     id: nextId("ntf"),
     userName: "鈴木さん",
     title: "雨で作業中断",
-    body: "Bビル改修・足場点検が雨のため中断しました",
+    body: "大手町オフィスタワー改修・足場点検が雨のため中断しました",
     createdAt: hoursAgoIso(3),
   },
   {
     id: nextId("ntf"),
     userName: "田中さん",
     title: "進捗報告が届きました",
-    body: "A邸新築：外壁ボード貼り 10枚完了",
+    body: "新宿駅西口再開発A棟：外壁ボード貼り 10枚完了",
     createdAt: hoursAgoIso(2),
   },
   {
     id: nextId("ntf"),
     userName: "山田さん",
     title: "作業開始",
-    body: "Cマンション 型枠調整に着手",
+    body: "豊洲オフィスレジデンス 型枠調整に着手",
     createdAt: hoursAgoIso(7),
   },
 ];
@@ -460,6 +726,7 @@ const initialSiteProgressLogs: SiteProgressLog[] = [
 export const state = {
   users: [] as SessionUser[],
   sites: initialSites,
+  phases: initialPhases,
   reports: [] as Report[],
   tasks: initialTasks,
   taskUpdates: initialTaskUpdates,
@@ -574,6 +841,64 @@ export function createReport(siteId: string, authorName: string, rawText: string
   return report;
 }
 
+function refreshPhasesForSite(siteId: string) {
+  for (const phase of state.phases.filter((p) => p.siteId === siteId)) {
+    if (phase.progressMode === "manual") continue;
+    const tasks = state.tasks.filter((t) => t.phaseId === phase.id);
+    if (tasks.length === 0) continue;
+    const pct = Math.round(
+      tasks.reduce((sum, t) => sum + t.progressPct, 0) / tasks.length,
+    );
+    phase.progressPct = pct;
+  }
+  const site = state.sites.find((s) => s.id === siteId);
+  const phasesHere = state.phases.filter((p) => p.siteId === siteId);
+  if (site && phasesHere.length > 0) {
+    site.overallProgress = Math.round(
+      phasesHere.reduce((sum, p) => sum + p.progressPct, 0) / phasesHere.length,
+    );
+  }
+}
+
+function applyPhotoProgressFromReport(photo: PhotoReport, userName: string) {
+  if (photo.category !== "progress") return;
+  const candidates = state.tasks.filter(
+    (t) =>
+      t.siteId === photo.siteId &&
+      t.autoProgressSource === "photo_count" &&
+      t.status !== "completed",
+  );
+  if (candidates.length === 0) return;
+  const byTitle = candidates.find(
+    (t) => photo.title && photo.title.includes(t.title),
+  );
+  const task = byTitle ?? candidates[0];
+  addTaskQuantity(task.id, 1, userName);
+  refreshPhasesForSite(photo.siteId);
+}
+
+export function togglePhaseProgressMode(phaseId: string): ProjectPhase | null {
+  const phase = state.phases.find((p) => p.id === phaseId);
+  if (!phase) return null;
+  phase.progressMode = phase.progressMode === "auto" ? "manual" : "auto";
+  return phase;
+}
+
+export function setPhaseManualPercent(phaseId: string, pct: number): ProjectPhase | null {
+  const phase = state.phases.find((p) => p.id === phaseId);
+  if (!phase) return null;
+  phase.progressMode = "manual";
+  phase.progressPct = Math.max(0, Math.min(100, pct));
+  const site = state.sites.find((s) => s.id === phase.siteId);
+  const phasesHere = state.phases.filter((p) => p.siteId === phase.siteId);
+  if (site && phasesHere.length > 0) {
+    site.overallProgress = Math.round(
+      phasesHere.reduce((sum, p) => sum + p.progressPct, 0) / phasesHere.length,
+    );
+  }
+  return phase;
+}
+
 export function createPhotoReport(input: {
   siteId: string;
   userName: string;
@@ -581,23 +906,67 @@ export function createPhotoReport(input: {
   fileName: string;
   title?: string;
   note?: string;
+  photoSlotId?: string;
+  phaseId?: string;
+  phaseLabel?: string;
 }) {
   const site = state.sites.find((item) => item.id === input.siteId);
   const date = new Date().toISOString().slice(0, 10);
   const siteFolder = site?.name ?? input.siteId;
-  const storagePath = `/photos/${siteFolder}/${date}/${input.category}/${input.fileName}`;
+  const sash = getExteriorSashConfig(input.siteId);
+
+  let fileName = input.fileName.trim();
+  let title = input.title?.trim();
+  let storagePath: string;
+  let photoSlotId = input.photoSlotId;
+  let phaseId = input.phaseId;
+  let phaseLabel = input.phaseLabel;
+
+  if (photoSlotId && sash) {
+    const slot = sash.slots.find((s) => s.id === photoSlotId);
+    const phLabel = phaseLabel ?? sash.currentPhase.label;
+    const phId = phaseId ?? sash.currentPhase.id;
+    if (slot) {
+      title = title || `${slot.label}（${phLabel}）`;
+      fileName = buildAutoFileName({
+        date,
+        siteShort: sash.shortName,
+        phaseLabel: phLabel,
+        slotLabel: slot.label,
+        userName: input.userName,
+      });
+      storagePath = buildDemoStoragePath({
+        siteShort: sash.shortName,
+        phaseLabel: phLabel,
+        slotLabel: slot.label,
+        date,
+        fileName,
+      });
+      phaseId = phId;
+      phaseLabel = phLabel;
+    } else {
+      storagePath = `/photos/${siteFolder}/${date}/${input.category}/${fileName}`;
+    }
+  } else {
+    storagePath = `/photos/${siteFolder}/${date}/${input.category}/${fileName}`;
+  }
+
   const report: PhotoReport = {
     id: nextId("photo"),
     siteId: input.siteId,
     userName: input.userName,
     category: input.category,
-    fileName: input.fileName,
-    title: input.title,
-    note: input.note,
+    fileName,
+    title,
+    note: input.note?.trim(),
     storagePath,
     createdAt: todayIso(),
+    photoSlotId,
+    phaseId,
+    phaseLabel,
   };
   state.photoReports.unshift(report);
+  applyPhotoProgressFromReport(report, input.userName);
   return report;
 }
 
@@ -678,23 +1047,66 @@ export function setTaskInterruption(taskId: string, reason: PauseReason, userNam
   return task;
 }
 
-export function applyAssignmentChange(assignmentId: string, afterSiteName: string, reason: string) {
+export function updateAssignment(
+  assignmentId: string,
+  patch: AssignmentUpdatePatch,
+): { assignment: Assignment; siteChange: AssignmentChange | null } | null {
   const assignment = state.assignments.find((item) => item.id === assignmentId);
   if (!assignment) return null;
-  const before = assignment.siteName;
-  assignment.siteName = afterSiteName;
-  assignment.status = "changed";
-  const change: AssignmentChange = {
-    id: nextId("chg"),
-    assignmentId,
-    reason,
-    beforeSiteName: before,
-    afterSiteName,
-    acknowledgedBy: [],
-    changedAt: todayIso(),
-  };
-  state.assignmentChanges.unshift(change);
-  return change;
+
+  const beforeSiteName = assignment.siteName;
+  let siteChanged = false;
+
+  if (patch.siteId !== undefined) {
+    const site = state.sites.find((s) => s.id === patch.siteId);
+    if (!site) return null;
+    if (assignment.siteId !== site.id || assignment.siteName !== site.name) {
+      siteChanged = true;
+    }
+    assignment.siteId = site.id;
+    assignment.siteName = site.name;
+  }
+
+  if (patch.shift !== undefined) {
+    assignment.shift = patch.shift;
+  }
+  if (patch.workDate !== undefined) {
+    assignment.workDate = patch.workDate;
+  }
+  if (patch.status !== undefined) {
+    assignment.status = patch.status;
+  } else if (
+    patch.siteId !== undefined ||
+    patch.shift !== undefined ||
+    patch.workDate !== undefined
+  ) {
+    if (assignment.status !== "cancelled") {
+      assignment.status = "changed";
+    }
+  }
+
+  let siteChange: AssignmentChange | null = null;
+  if (siteChanged) {
+    siteChange = {
+      id: nextId("chg"),
+      assignmentId,
+      reason: patch.reason ?? "配員変更",
+      beforeSiteName,
+      afterSiteName: assignment.siteName,
+      acknowledgedBy: [],
+      changedAt: todayIso(),
+    };
+    state.assignmentChanges.unshift(siteChange);
+  }
+
+  return { assignment, siteChange };
+}
+
+export function applyAssignmentChange(assignmentId: string, afterSiteName: string, reason: string) {
+  const site = state.sites.find((s) => s.name === afterSiteName.trim());
+  if (!site) return null;
+  const result = updateAssignment(assignmentId, { siteId: site.id, reason });
+  return result?.siteChange ?? null;
 }
 
 export function acknowledgeChange(changeId: string, userName: string) {

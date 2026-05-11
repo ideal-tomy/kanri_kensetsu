@@ -63,17 +63,22 @@ export function PersonnelBoard({
   const changeNow = async () => {
     if (assignments.length === 0) return;
     const target = assignments[0];
+    const alternate = initialSites.find((s) => s.id !== target.siteId);
+    const afterSiteName = alternate?.name ?? initialSites[0]?.name;
+    if (!afterSiteName) return;
     const res = await fetch(`/api/assignments/${target.id}/change`, {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ afterSiteName: "応援現場", reason: "雨天で入れ替え" }),
+      body: JSON.stringify({ afterSiteName, reason: "雨天で入れ替え" }),
     });
     const data = await res.json();
     if (!res.ok) {
       setMessage(data.message ?? COPY.common.error_default);
       return;
     }
-    setChanges((prev) => [data.change, ...prev]);
+    if (data.change) {
+      setChanges((prev) => [data.change, ...prev]);
+    }
     setMessage("急な変更を反映しました");
     void reload();
   };

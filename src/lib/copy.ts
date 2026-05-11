@@ -1,7 +1,7 @@
 export const COPY = {
   auth: {
     login_title: "はじめる",
-    login_button: "かいしゃに入る",
+    login_button: "ログイン",
     join_with_code: "招待コードで入る",
     company_code_label: "会社のコード（必須）",
     name_label: "なまえ（必須）",

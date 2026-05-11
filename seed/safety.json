@@ -4,7 +4,7 @@
   "sites": [
     {
       "id": "site-1",
-      "name": "A邸新築",
+      "name": "新宿駅西口再開発A棟",
       "status": "active",
       "overallProgress": 42,
       "startedAt": "2026-04-01",
@@ -12,7 +12,7 @@
     },
     {
       "id": "site-2",
-      "name": "Bビル改修",
+      "name": "大手町オフィスタワー改修",
       "status": "active",
       "overallProgress": 30,
       "startedAt": "2026-03-15",

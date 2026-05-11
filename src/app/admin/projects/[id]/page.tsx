@@ -13,7 +13,17 @@ import {
   getSiteTaskMix,
 } from "@/lib/admin-stats";
 import { ADMIN_COLORS } from "@/lib/admin-theme";
+import { SHIFT_LABEL_SHORT } from "@/lib/copy";
 import { blueprints, contractors, projects, scheduleTasks, workers } from "@/data/mock";
+
+function todayYmdTokyo(): string {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Tokyo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+}
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -71,6 +81,22 @@ export default async function ProjectDetailPage({ params }: Props) {
     planned: t.plannedQty ?? 0,
   }));
 
+  const todayYmd = todayYmdTokyo();
+  const todayAssignments = matchedSite
+    ? state.assignments.filter(
+        (a) =>
+          a.siteId === matchedSite.id &&
+          a.workDate === todayYmd &&
+          a.status !== "cancelled",
+      )
+    : [];
+
+  const heroTasks = [...liveTasks].sort((a, b) => {
+    const rank = (s: (typeof liveTasks)[0]["status"]) =>
+      s === "in_progress" ? 0 : s === "paused" ? 1 : s === "not_started" ? 2 : 3;
+    return rank(a.status) - rank(b.status);
+  }).slice(0, 5);
+
   return (
     <PageShell
       mode="admin"
@@ -84,7 +110,96 @@ export default async function ProjectDetailPage({ params }: Props) {
         { label: project.projectName },
       ]}
     >
-      <section className="grid gap-4 lg:grid-cols-3">
+      <section className="grid gap-4">
+        <ChartCard title="今日の現場（配員・作業・進捗）" subtitle={`基準日 ${todayYmd}（Asia/Tokyo）`}>
+          {!matchedSite ? (
+            <p className="text-sm text-zinc-600">
+              ライブ現場との名前照合がありません（案件名の先頭と現場名の包含マッチ）。
+            </p>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-3">
+              <div className="rounded-lg border border-zinc-100 bg-zinc-50/90 p-3">
+                <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                  今日の配員
+                </p>
+                {todayAssignments.length === 0 ? (
+                  <p className="mt-2 text-sm text-zinc-600">本日の予定はありません</p>
+                ) : (
+                  <ul className="mt-2 flex flex-wrap gap-2">
+                    {todayAssignments.map((a) => {
+                      const night = a.shift.startsWith("night");
+                      const half =
+                        a.shift.endsWith("am") ||
+                        a.shift.endsWith("pm") ||
+                        a.shift === "night_early" ||
+                        a.shift === "night_late";
+                      return (
+                        <li
+                          key={a.id}
+                          className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold ${
+                            night
+                              ? "bg-indigo-900 text-white"
+                              : half
+                                ? "bg-orange-200 text-orange-900"
+                                : "bg-orange-500 text-white"
+                          }`}
+                        >
+                          <span>{night ? "🌙" : "☀"}</span>
+                          <span>{a.userName}</span>
+                          <span className="opacity-90">{SHIFT_LABEL_SHORT[a.shift]}</span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </div>
+              <div className="rounded-lg border border-zinc-100 bg-zinc-50/90 p-3">
+                <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                  今日の作業（ライブ）
+                </p>
+                {heroTasks.length === 0 ? (
+                  <p className="mt-2 text-sm text-zinc-600">タスクはありません</p>
+                ) : (
+                  <ul className="mt-2 space-y-2">
+                    {heroTasks.map((t) => (
+                      <li key={t.id} className="rounded-md border border-white bg-white/80 px-2 py-1.5">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <span className="text-sm font-medium text-zinc-900">{t.title}</span>
+                          <StatusBadge status={t.status} />
+                        </div>
+                        <p className="mt-0.5 text-xs text-zinc-600">
+                          進捗 {t.progressPct}%
+                          {t.plannedQty != null ? ` ・ ${t.actualQty}/${t.plannedQty}${t.unit ?? ""}` : ""}
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              <div className="flex flex-col justify-center rounded-lg border border-zinc-100 bg-zinc-50/90 p-3">
+                <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                  進捗
+                </p>
+                <div className="mt-2 flex flex-wrap items-center gap-4">
+                  <ProgressRing value={project.progressPercent ?? 0} size={88} thickness={10} />
+                  <div>
+                    <p className="text-xl font-bold text-zinc-900">{project.progressPercent}%</p>
+                    <p className="text-sm text-zinc-700">案件全体（mock）</p>
+                    {liveMix ? (
+                      <p className="mt-1 text-xs text-zinc-600">
+                        ライブタスク：完了 {liveMix.byStatus.completed} / 進行中{" "}
+                        {liveMix.byStatus.in_progress} / 中断 {liveMix.byStatus.paused}
+                      </p>
+                    ) : null}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </ChartCard>
+      </section>
+
+      <section className="mt-6 grid gap-4 lg:grid-cols-3">
         <div className="lg:col-span-2 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
           <div className="flex items-start gap-3 text-primary">
             <MapPin className="h-5 w-5 shrink-0" aria-hidden />

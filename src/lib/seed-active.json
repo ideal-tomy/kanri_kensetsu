@@ -1,10 +1,10 @@
 {
-  "label": "山田建設工業（戸建メイン）",
+  "label": "東都建設工業（都内大型ビル中心・YKK AP/パソナ系案件）",
   "scenario": "A",
   "sites": [
     {
       "id": "site-1",
-      "name": "A邸新築",
+      "name": "新宿駅西口再開発A棟",
       "status": "active",
       "overallProgress": 42,
       "startedAt": "2026-04-01",
@@ -12,7 +12,7 @@
     },
     {
       "id": "site-2",
-      "name": "Bビル改修",
+      "name": "大手町オフィスタワー改修",
       "status": "active",
       "overallProgress": 68,
       "startedAt": "2026-03-15",
@@ -20,7 +20,7 @@
     },
     {
       "id": "site-3",
-      "name": "Cマンション",
+      "name": "豊洲オフィスレジデンス",
       "status": "active",
       "overallProgress": 15,
       "startedAt": "2026-04-20",

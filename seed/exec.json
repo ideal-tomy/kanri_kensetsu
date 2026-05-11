@@ -4,7 +4,7 @@
   "sites": [
     {
       "id": "site-1",
-      "name": "完了済み: 心斎橋プロジェクト",
+      "name": "完了済み: 豊洲医療モール改装",
       "status": "completed",
       "overallProgress": 100,
       "startedAt": "2025-11-01",
@@ -12,7 +12,7 @@
     },
     {
       "id": "site-2",
-      "name": "進行中: なんばパーク改修",
+      "name": "進行中: 新宿駅西口再開発A棟",
       "status": "active",
       "overallProgress": 78,
       "startedAt": "2026-01-10",
@@ -20,7 +20,7 @@
     },
     {
       "id": "site-3",
-      "name": "進行中: 京都オフィス棟",
+      "name": "進行中: 渋谷駅南街区オフィス棟",
       "status": "active",
       "overallProgress": 55,
       "startedAt": "2026-02-15",
@@ -28,7 +28,7 @@
     },
     {
       "id": "site-4",
-      "name": "計画: 神戸物流センター",
+      "name": "計画: 品川物流ハブ",
       "status": "active",
       "overallProgress": 12,
       "startedAt": "2026-04-20",

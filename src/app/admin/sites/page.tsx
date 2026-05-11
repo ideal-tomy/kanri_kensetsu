@@ -73,43 +73,55 @@ export default function AdminSitesPage() {
 
       <section className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {progressList.map((row) => (
-          <Link
+          <article
             key={row.site.id}
-            href={`/admin/projects/${row.site.id}`}
-            className="group rounded-xl border border-zinc-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
+            className="group overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
           >
-            <div className="flex items-start gap-4">
-              <ProgressRing value={row.progressPercent} size={88} thickness={9} />
-              <div className="min-w-0 flex-1">
-                <p className="text-xs text-zinc-500">{row.site.companyCode}</p>
-                <h3 className="text-base font-bold text-zinc-900">{row.site.name}</h3>
-                <p className="mt-1 inline-flex items-center gap-1 text-xs text-zinc-500">
-                  <MapPin className="h-3 w-3" />
-                  {row.site.startedAt} 〜 {row.site.endedAt ?? "未定"}
-                </p>
-                <div className="mt-2 flex flex-wrap gap-1.5">
-                  <span className="rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-800">
-                    タスク {row.completedTasks}/{row.totalTasks}
-                  </span>
-                  <span className="rounded-full bg-orange-50 px-2 py-0.5 text-xs font-medium text-orange-800">
-                    写真 {row.photoCount}枚
-                  </span>
-                  <span
-                    className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                      row.site.status === "active"
-                        ? "bg-emerald-50 text-emerald-800"
-                        : "bg-zinc-100 text-zinc-700"
-                    }`}
-                  >
-                    {row.site.status === "active" ? "進行中" : "完了"}
-                  </span>
+            <Link
+              href={`/admin/projects/${row.site.id}`}
+              className="block p-4 transition hover:bg-zinc-50/80"
+            >
+              <div className="flex items-start gap-4">
+                <ProgressRing value={row.progressPercent} size={88} thickness={9} />
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs text-zinc-500">{row.site.companyCode}</p>
+                  <h3 className="text-base font-bold text-zinc-900">{row.site.name}</h3>
+                  <p className="mt-1 inline-flex items-center gap-1 text-xs text-zinc-500">
+                    <MapPin className="h-3 w-3" />
+                    {row.site.startedAt} 〜 {row.site.endedAt ?? "未定"}
+                  </p>
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    <span className="rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-800">
+                      タスク {row.completedTasks}/{row.totalTasks}
+                    </span>
+                    <span className="rounded-full bg-orange-50 px-2 py-0.5 text-xs font-medium text-orange-800">
+                      写真 {row.photoCount}枚
+                    </span>
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                        row.site.status === "active"
+                          ? "bg-emerald-50 text-emerald-800"
+                          : "bg-zinc-100 text-zinc-700"
+                      }`}
+                    >
+                      {row.site.status === "active" ? "進行中" : "完了"}
+                    </span>
+                  </div>
                 </div>
               </div>
+              <p className="mt-3 text-xs font-medium text-primary group-hover:underline">
+                案件サマリーへ →
+              </p>
+            </Link>
+            <div className="flex gap-4 border-t border-zinc-100 px-4 py-2 text-xs font-semibold">
+              <Link
+                href={`/admin/sites/${encodeURIComponent(row.site.id)}/phases`}
+                className="text-zinc-700 underline hover:text-primary"
+              >
+                工程管理
+              </Link>
             </div>
-            <p className="mt-3 text-xs font-medium text-primary group-hover:underline">
-              詳細へ →
-            </p>
-          </Link>
+          </article>
         ))}
       </section>
     </PageShell>

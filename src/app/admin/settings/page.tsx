@@ -54,7 +54,7 @@ export default function AdminSettingsPage() {
             </li>
             <li className="flex items-center justify-between">
               <span className="text-zinc-500">会社名</span>
-              <span className="font-bold text-zinc-900">山田建設工業</span>
+              <span className="font-bold text-zinc-900">東都建設工業</span>
             </li>
           </ul>
         </ChartCard>

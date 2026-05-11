@@ -18,6 +18,7 @@ const ITEMS_BY_ROLE: Record<NavRole, { href: string; label: string }[]> = {
     { href: "/m/worker", label: "しごと" },
     { href: "/m/worker/work", label: "業務" },
     { href: "/m/worker/reporting", label: "報告" },
+    { href: "/m/worker/chat", label: "トーク" },
     { href: "/m/worker/notice", label: "おしらせ" },
   ],
   supervisor: [
@@ -26,6 +27,7 @@ const ITEMS_BY_ROLE: Record<NavRole, { href: string; label: string }[]> = {
     { href: "/m/supervisor/tasks", label: "進捗" },
     { href: "/m/supervisor/personnel", label: "人員" },
     { href: "/m/supervisor/photo", label: "写真" },
+    { href: "/m/supervisor/chat", label: "トーク" },
   ],
 };
 
@@ -34,7 +36,12 @@ export function BottomNav({ role = "legacy" }: { role?: NavRole }) {
   const items = ITEMS_BY_ROLE[role];
   return (
     <nav className="fixed bottom-0 left-0 right-0 border-t border-zinc-200 bg-white p-2">
-      <ul className={`mx-auto grid max-w-3xl gap-2 ${items.length === 4 ? "grid-cols-4" : "grid-cols-5"}`}>
+      <ul
+        className="mx-auto grid max-w-3xl gap-2"
+        style={{
+          gridTemplateColumns: `repeat(${items.length}, minmax(0, 1fr))`,
+        }}
+      >
         {items.map((item) => {
           const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
           return (

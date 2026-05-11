@@ -4,13 +4,13 @@ export const chatThreads: ChatThread[] = [
   {
     id: "ct1",
     projectId: "p1",
-    title: "大阪A棟 現場連絡",
+    title: "新宿A棟 現場連絡",
     updatedAt: "2026-04-29T11:20:00+09:00",
   },
   {
     id: "ct2",
     projectId: "p2",
-    title: "梅田改修 品質・日程",
+    title: "大手町改修 品質・日程",
     updatedAt: "2026-04-29T09:45:00+09:00",
   },
 ];

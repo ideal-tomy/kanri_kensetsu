@@ -141,7 +141,7 @@ export const assignments: Assignment[] = [
     linkedIncidentNoteId: "inc-w1-1",
     alarmRuleLabel: "上請け連携リスク（履歴メモ照合）",
     alarmEvidence:
-      "メモ inc-w1-1: 上請けとの連絡チャネルで齟齬の記録あり。梅田案件（p2）は同一上請け系列の可能性（デモルール）。キーワード: 上請け・指示齟齬",
+      "メモ inc-w1-1: 上請けとの連絡チャネルで齟齬の記録あり。大手町案件（p2）は同一上請け系列の可能性（デモルール）。キーワード: 上請け・指示齟齬",
   },
 ];
 

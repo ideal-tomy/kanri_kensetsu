@@ -4,7 +4,7 @@
   "sites": [
     {
       "id": "site-1",
-      "name": "中之島タワー改修",
+      "name": "有楽町駅前タワー改修",
       "status": "active",
       "overallProgress": 55,
       "startedAt": "2026-02-10",
@@ -12,7 +12,7 @@
     },
     {
       "id": "site-2",
-      "name": "梅田北口ビル",
+      "name": "赤坂見附ビル",
       "status": "active",
       "overallProgress": 38,
       "startedAt": "2026-03-01",
@@ -20,7 +20,7 @@
     },
     {
       "id": "site-3",
-      "name": "本町オフィスB館",
+      "name": "日本橋オフィスB館",
       "status": "active",
       "overallProgress": 72,
       "startedAt": "2026-01-15",
@@ -28,7 +28,7 @@
     },
     {
       "id": "site-4",
-      "name": "天王寺商業棟",
+      "name": "池袋商業棟",
       "status": "active",
       "overallProgress": 22,
       "startedAt": "2026-04-05",
@@ -36,7 +36,7 @@
     },
     {
       "id": "site-5",
-      "name": "新大阪駅ビル改修",
+      "name": "新橋駅前ビル改修",
       "status": "active",
       "overallProgress": 60,
       "startedAt": "2026-02-20",

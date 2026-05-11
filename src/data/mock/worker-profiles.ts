@@ -8,7 +8,7 @@ export const workerProfiles: Record<string, WorkerProfileDetail> = {
       "建具工事に従事14年。大型物件の現場代理人・職長を歴任。図面読解・搬入調整・引渡しまで一貫対応可能。",
     internalCareerLines: [
       "2018年〜 主任技術者補佐（社内認定）",
-      "2022年〜 大型案件リード担当（大阪エリア）",
+      "2022年〜 大型案件リード担当（東京都内エリア）",
     ],
     qualificationDetails: [
       "建築施工管理技士（建築）（※デモ）",
@@ -18,7 +18,7 @@ export const workerProfiles: Record<string, WorkerProfileDetail> = {
     pastProjects: [
       {
         id: "pp-w1-1",
-        projectName: "大阪駅前再開発A棟 建具工事",
+        projectName: "新宿駅西口再開発A棟 建具工事",
         period: "2026-04〜",
         role: "職長（現場監督補佐）",
         wasSiteLead: true,
@@ -32,7 +32,7 @@ export const workerProfiles: Record<string, WorkerProfileDetail> = {
       },
       {
         id: "pp-w1-3",
-        projectName: "関西空港ラウンジ増築",
+        projectName: "羽田空港第3ターミナルラウンジ増築",
         period: "2022-05〜2024-08",
         role: "建具取付リーダー",
         wasSiteLead: false,
@@ -58,7 +58,7 @@ export const workerProfiles: Record<string, WorkerProfileDetail> = {
     pastProjects: [
       {
         id: "pp-w2-1",
-        projectName: "梅田商業ビル改修",
+        projectName: "大手町オフィスタワー共用部改修",
         period: "2026-03〜",
         role: "一般担当",
         wasSiteLead: false,
@@ -75,7 +75,7 @@ export const workerProfiles: Record<string, WorkerProfileDetail> = {
     pastProjects: [
       {
         id: "pp-w3-1",
-        projectName: "神戸物流センター新築",
+        projectName: "品川物流ハブ新築（港南）",
         period: "2026-02〜",
         role: "安全管理補佐",
         wasSiteLead: false,
@@ -92,7 +92,7 @@ export const workerProfiles: Record<string, WorkerProfileDetail> = {
     pastProjects: [
       {
         id: "pp-w4-1",
-        projectName: "大阪駅前再開発A棟 建具工事",
+        projectName: "新宿駅西口再開発A棟 建具工事",
         period: "2026-01〜",
         role: "記録担当",
         wasSiteLead: false,
@@ -108,7 +108,7 @@ export const workerProfiles: Record<string, WorkerProfileDetail> = {
     pastProjects: [
       {
         id: "pp-w5-1",
-        projectName: "京都オフィス棟リニューアル",
+        projectName: "渋谷駅南街区オフィス棟リニューアル",
         period: "2026-05〜",
         role: "予備要員",
         wasSiteLead: false,
@@ -125,7 +125,7 @@ export const workerProfiles: Record<string, WorkerProfileDetail> = {
     pastProjects: [
       {
         id: "pp-w6-1",
-        projectName: "梅田商業ビル改修",
+        projectName: "大手町オフィスタワー共用部改修",
         period: "2026-02〜",
         role: "品質責任者補佐",
         wasSiteLead: true,
@@ -142,7 +142,7 @@ export const workerProfiles: Record<string, WorkerProfileDetail> = {
     pastProjects: [
       {
         id: "pp-w7-1",
-        projectName: "神戸物流センター新築",
+        projectName: "品川物流ハブ新築（港南）",
         period: "2025-11〜",
         role: "書類担当",
         wasSiteLead: false,
@@ -158,7 +158,7 @@ export const workerProfiles: Record<string, WorkerProfileDetail> = {
     pastProjects: [
       {
         id: "pp-w8-1",
-        projectName: "大阪駅前再開発A棟 建具工事",
+        projectName: "新宿駅西口再開発A棟 建具工事",
         period: "2025-12〜",
         role: "搬入調整",
         wasSiteLead: false,
