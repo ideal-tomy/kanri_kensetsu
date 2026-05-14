@@ -57,7 +57,7 @@ export function ReportForm() {
       setMessage(data.message ?? COPY.common.error_default);
       return;
     }
-    setMessage("送りました。事務所で見られます。");
+    setMessage("送信しました。管理画面で確認できます。");
     setRawText("");
     setPreview("");
   };

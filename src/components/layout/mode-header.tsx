@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ClipboardCheck, MessageSquareWarning } from "lucide-react";
+import { ClipboardCheck, HardHat, MessageSquareWarning } from "lucide-react";
 import { DEMO_BRAND } from "@/config/demo-brand";
 
 interface ModeHeaderProps {
@@ -24,7 +24,7 @@ export function ModeHeader({ title, subtitle, current }: ModeHeaderProps) {
           <h1 className="text-lg font-bold text-zinc-900">{title}</h1>
           {subtitle ? <p className="text-sm text-zinc-600">{subtitle}</p> : null}
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap justify-end gap-2">
           <Link
             href="/admin"
             className={`inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium ${
@@ -46,6 +46,13 @@ export function ModeHeader({ title, subtitle, current }: ModeHeaderProps) {
           >
             <MessageSquareWarning className="h-4 w-4" />
             現場画面（スマホ）
+          </Link>
+          <Link
+            href="/m/supervisor"
+            className="inline-flex items-center gap-2 rounded-md bg-zinc-100 px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-200"
+          >
+            <HardHat className="h-4 w-4" />
+            現場監督（スマホ）
           </Link>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { resolveApiUserFromRequest } from "@/lib/auth/preview";
 import { getSessionFromRequest, type SessionUser } from "@/lib/auth/session";
 
 export function requireSession(request: Request): SessionUser | NextResponse {
@@ -6,5 +7,5 @@ export function requireSession(request: Request): SessionUser | NextResponse {
   if (!user) {
     return NextResponse.json({ message: "ログインしてください" }, { status: 401 });
   }
-  return user;
+  return resolveApiUserFromRequest(request, user);
 }

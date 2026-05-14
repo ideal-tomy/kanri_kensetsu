@@ -1,9 +1,9 @@
 import { BottomNav } from "@/components/nav/bottom-nav";
-import { getSessionFromCookies } from "@/lib/auth/session";
+import { getViewSession } from "@/lib/auth/preview";
 import { state } from "@/lib/prototype-store";
 
 export default async function WorkerNoticePage() {
-  const user = await getSessionFromCookies();
+  const { user } = await getViewSession("worker");
   if (!user) return null;
   const myNotifications = state.notifications.filter((item) => item.userName === user.name);
 

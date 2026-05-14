@@ -21,8 +21,8 @@ export default async function SupervisorPhotoPage() {
     <main className="space-y-4 p-4 pb-24">
       <header>
         <h1 className="text-2xl font-bold text-zinc-900">写真の確認</h1>
-        <p className="mt-1 text-sm text-zinc-700">
-          担当現場でみんなが撮った写真をまとめて見られます。
+        <p className="mt-1 text-sm font-medium text-zinc-700">
+          担当現場の写真を一覧で確認できます。
         </p>
       </header>
 

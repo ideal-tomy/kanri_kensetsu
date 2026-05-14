@@ -1,5 +1,5 @@
 import { notFound, redirect } from "next/navigation";
-import { getSessionFromCookies } from "@/lib/auth/session";
+import { getViewSession } from "@/lib/auth/preview";
 import { ChatRoom } from "@/components/chat/ChatRoom";
 import { getSitesForUser, state } from "@/lib/prototype-store";
 
@@ -8,7 +8,7 @@ export default async function WorkerChatSitePage({
 }: {
   params: Promise<{ siteId: string }>;
 }) {
-  const user = await getSessionFromCookies();
+  const { user } = await getViewSession("worker");
   if (!user) redirect("/login");
   if (user.role !== "worker") redirect("/m/supervisor/chat");
 

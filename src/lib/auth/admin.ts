@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { toPreviewSupervisorSession } from "@/lib/auth/preview";
 import { getSessionFromCookies, type SessionUser } from "@/lib/auth/session";
 import { state } from "@/lib/prototype-store";
 
@@ -42,12 +43,11 @@ export async function requireAdminSession(): Promise<SessionUser> {
 export async function requireSupervisorSession(): Promise<SessionUser> {
   const cookieUser = await getSessionFromCookies();
   if (cookieUser) {
-    if (
-      cookieUser.role === "supervisor" ||
-      cookieUser.role === "admin" ||
-      cookieUser.role === "owner"
-    ) {
+    if (cookieUser.role === "supervisor") {
       return cookieUser;
+    }
+    if (cookieUser.role === "admin" || cookieUser.role === "owner") {
+      return toPreviewSupervisorSession();
     }
     redirect("/m/worker");
   }

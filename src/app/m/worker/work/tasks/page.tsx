@@ -1,9 +1,9 @@
 import { BottomNav } from "@/components/nav/bottom-nav";
-import { getSessionFromCookies } from "@/lib/auth/session";
+import { getViewSession } from "@/lib/auth/preview";
 import { getAssignmentsForUser, getTasksForUser } from "@/lib/prototype-store";
 
 export default async function WorkerTaskNormaPage() {
-  const user = await getSessionFromCookies();
+  const { user } = await getViewSession("worker");
   if (!user) return null;
 
   const today = new Date().toISOString().slice(0, 10);

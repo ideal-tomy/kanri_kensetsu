@@ -9,7 +9,7 @@ import {
   Wrench,
 } from "lucide-react";
 import { BottomNav } from "@/components/nav/bottom-nav";
-import { getSessionFromCookies } from "@/lib/auth/session";
+import { getViewSession } from "@/lib/auth/preview";
 import { getAssignmentsForUser, getSitesForUser, getTasksForUser } from "@/lib/prototype-store";
 
 const actionGroups: {
@@ -36,7 +36,7 @@ const actionGroups: {
 ];
 
 export default async function WorkerHomePage() {
-  const user = await getSessionFromCookies();
+  const { user } = await getViewSession("worker");
   if (!user) return null;
 
   const assignments = getAssignmentsForUser(user);

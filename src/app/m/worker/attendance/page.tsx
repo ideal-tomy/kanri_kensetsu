@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { ArrowLeft, CalendarClock } from "lucide-react";
 import { BottomNav } from "@/components/nav/bottom-nav";
-import { getSessionFromCookies } from "@/lib/auth/session";
+import { getViewSession } from "@/lib/auth/preview";
 import { getAssignmentsForUser, getSitesForUser } from "@/lib/prototype-store";
 import { AttendanceClock } from "./attendance-clock";
 
 export default async function WorkerAttendancePage() {
-  const user = await getSessionFromCookies();
+  const { user } = await getViewSession("worker");
   if (!user) return null;
 
   const today = new Date().toISOString().slice(0, 10);

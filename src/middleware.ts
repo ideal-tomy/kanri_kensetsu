@@ -29,10 +29,6 @@ export function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/m/worker", req.url));
   }
 
-  if (pathname.startsWith("/m/worker") && ["admin", "owner"].includes(user.role)) {
-    return NextResponse.redirect(new URL("/admin", req.url));
-  }
-
   return NextResponse.next();
 }
 

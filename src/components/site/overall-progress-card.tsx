@@ -99,8 +99,8 @@ export function OverallProgressCard({
       {open ? (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 sm:items-center">
           <div className="w-full max-w-md rounded-t-2xl bg-white p-4 sm:rounded-2xl">
-            <p className="text-lg font-bold">現場ぜんたいの進みぐあいを変える</p>
-            <p className="text-sm text-zinc-600">いま：{site.overallProgress}%</p>
+            <p className="text-lg font-bold">現場全体の進捗を更新</p>
+            <p className="text-sm font-medium text-zinc-700">現在：{site.overallProgress}%</p>
 
             <div className="mt-3 grid grid-cols-5 gap-2">
               {quickValues.map((v) => (
@@ -118,7 +118,7 @@ export function OverallProgressCard({
             </div>
 
             <label className="mt-3 block text-sm font-semibold text-zinc-700">
-              数字で入れる：
+              数値入力（%）：
               <input
                 type="number"
                 min={0}
@@ -131,7 +131,7 @@ export function OverallProgressCard({
             </label>
 
             <label className="mt-3 block text-sm font-semibold text-zinc-700">
-              ひとこと（任意）
+              コメント（任意）
               <textarea
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}

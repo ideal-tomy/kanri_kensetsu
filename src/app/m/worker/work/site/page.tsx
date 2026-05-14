@@ -1,5 +1,5 @@
 import { BottomNav } from "@/components/nav/bottom-nav";
-import { getSessionFromCookies } from "@/lib/auth/session";
+import { getViewSession } from "@/lib/auth/preview";
 import { getAssignmentsForUser, getSitesForUser, getTasksForUser, state } from "@/lib/prototype-store";
 
 function calcSchedulePct(startedAt?: string, endedAt?: string): number {
@@ -12,7 +12,7 @@ function calcSchedulePct(startedAt?: string, endedAt?: string): number {
 }
 
 export default async function WorkerSiteDetailPage() {
-  const user = await getSessionFromCookies();
+  const { user } = await getViewSession("worker");
   if (!user) return null;
 
   const today = new Date().toISOString().slice(0, 10);

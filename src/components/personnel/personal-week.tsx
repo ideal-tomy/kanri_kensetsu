@@ -94,7 +94,7 @@ export function PersonalWeek({
             >
               <p className="text-sm font-semibold text-zinc-700">
                 {d.label} {d.date}
-                {d.isToday ? <span className="ml-2 text-xs text-orange-700">きょう</span> : null}
+                {d.isToday ? <span className="ml-2 text-xs font-semibold text-orange-700">本日</span> : null}
               </p>
               {items.length === 0 ? (
                 <p className="text-sm text-zinc-500">・ 休み（または未配置）</p>

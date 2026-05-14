@@ -44,8 +44,8 @@ export default async function SupervisorNoticePage() {
     <main className="space-y-4 p-4 pb-24">
       <header>
         <h1 className="text-2xl font-bold text-zinc-900">おしらせ</h1>
-        <p className="mt-1 text-sm text-zinc-700">
-          急変更や、現場からの連絡をここに集約します。
+        <p className="mt-1 text-sm font-medium text-zinc-700">
+          配置変更や現場連絡を集約します。
         </p>
       </header>
 

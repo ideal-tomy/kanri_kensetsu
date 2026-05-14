@@ -55,7 +55,7 @@ export function TasksBoard({ initialTasks }: { initialTasks: Task[] }) {
   const handleStart = async (task: Task) => {
     const updated = await callPatch(task.id, { status: "in_progress" });
     if (updated) {
-      setMessage(`${task.title} を「やってる」にしました`);
+      setMessage(`${task.title} を「${TASK_STATUS_LABEL.in_progress}」にしました`);
       void reload();
     }
   };
@@ -70,7 +70,7 @@ export function TasksBoard({ initialTasks }: { initialTasks: Task[] }) {
     const updated = await callPatch(pauseTargetId, { status: "paused", pausedReason: reason });
     if (updated) {
       setMessage(
-        `${target?.title ?? "しごと"} を「とまってる」にしました（理由：${PAUSE_REASON_LABEL[reason]}）`,
+        `${target?.title ?? "作業"} を「${TASK_STATUS_LABEL.paused}」にしました（理由：${PAUSE_REASON_LABEL[reason]}）`,
       );
       void reload();
     }
@@ -102,7 +102,7 @@ export function TasksBoard({ initialTasks }: { initialTasks: Task[] }) {
     <>
       <header className="rounded-xl bg-white p-4 shadow-sm">
         <h1 className="text-2xl font-bold">{COPY.task.today}</h1>
-        <p className="text-sm text-zinc-600">カードを押して進みぐあいを更新します</p>
+        <p className="text-sm font-medium text-zinc-700">カードを操作して進捗を更新します</p>
         {message ? (
           <p className="mt-2 rounded-lg bg-zinc-900 px-3 py-2 text-sm font-semibold text-white">
             {message}
@@ -152,7 +152,7 @@ export function TasksBoard({ initialTasks }: { initialTasks: Task[] }) {
 
             {task.status === "paused" && task.pausedReason ? (
               <p className="mt-2 text-sm font-semibold text-red-700">
-                とまってる理由：{PAUSE_REASON_LABEL[task.pausedReason]}
+                中断理由：{PAUSE_REASON_LABEL[task.pausedReason]}
               </p>
             ) : null}
 
@@ -193,7 +193,7 @@ export function TasksBoard({ initialTasks }: { initialTasks: Task[] }) {
 
             {isCelebrating ? (
               <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-green-50/80 text-2xl font-bold text-green-700">
-                おつかれさま！
+                完了しました
               </div>
             ) : null}
           </article>

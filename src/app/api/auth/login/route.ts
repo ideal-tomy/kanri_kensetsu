@@ -5,10 +5,10 @@ import { encodeSession, getDefaultPathForRole, SESSION_COOKIE } from "@/lib/auth
 export async function POST(request: Request) {
   const body = (await request.json()) as { companyCode?: string; name?: string };
   if (!body.companyCode?.trim()) {
-    return NextResponse.json({ message: "会社のコードを入れてください" }, { status: 400 });
+    return NextResponse.json({ message: "会社コードを入力してください" }, { status: 400 });
   }
   if (!body.name?.trim()) {
-    return NextResponse.json({ message: "なまえを入れてください" }, { status: 400 });
+    return NextResponse.json({ message: "氏名を入力してください" }, { status: 400 });
   }
   let user;
   try {

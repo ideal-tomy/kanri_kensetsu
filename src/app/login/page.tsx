@@ -35,10 +35,10 @@ export default function LoginPage() {
     });
     const data = await res.json();
     if (!res.ok) {
-      setMessage(data.message ?? "うまくいかなかった");
+      setMessage(data.message ?? "ログインに失敗しました");
       return;
     }
-    setMessage(`${data.user.name}さん、入れました`);
+    setMessage(`${data.user.name} さんでログインしました`);
     router.push(data.target ?? "/");
   };
 
@@ -52,10 +52,10 @@ export default function LoginPage() {
     });
     const data = await res.json();
     if (!res.ok) {
-      setMessage(data.message ?? "うまくいかなかった");
+      setMessage(data.message ?? "ログインに失敗しました");
       return;
     }
-    setMessage(`${data.user.name}さん、入れました`);
+    setMessage(`${data.user.name} さんでログインしました`);
     router.push(data.target ?? "/");
   };
 
@@ -87,7 +87,7 @@ export default function LoginPage() {
           {COPY.auth.login_button}
         </button>
         <section className="mt-4 rounded-lg border border-zinc-200 bg-zinc-50 p-3">
-          <p className="text-sm font-bold text-zinc-800">仮アカウント（画面確認用）</p>
+          <p className="text-sm font-bold text-zinc-800">デモアカウント（経営者プレビュー用）</p>
           <div className="mt-2 space-y-2">
             {accounts.map((account) => (
               <button
@@ -103,7 +103,7 @@ export default function LoginPage() {
         </section>
         <p className="mt-3 text-sm font-semibold text-zinc-700">{message}</p>
         <Link href="/" className="mt-4 inline-block text-sm font-semibold text-zinc-700 underline">
-          ホームへ
+          ホームへ戻る
         </Link>
       </section>
     </main>

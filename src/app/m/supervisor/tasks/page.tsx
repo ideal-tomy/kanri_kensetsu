@@ -1,10 +1,10 @@
 import { BottomNav } from "@/components/nav/bottom-nav";
 import { TasksBoard } from "@/components/task/tasks-board";
-import { getSessionFromCookies } from "@/lib/auth/session";
+import { getViewSession } from "@/lib/auth/preview";
 import { getTasksForUser } from "@/lib/prototype-store";
 
 export default async function SupervisorTasksPage() {
-  const user = await getSessionFromCookies();
+  const { user } = await getViewSession("supervisor");
   if (!user) return null;
 
   return (
