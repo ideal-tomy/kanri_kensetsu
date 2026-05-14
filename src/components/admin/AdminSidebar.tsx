@@ -31,6 +31,7 @@ import {
   ShieldCheck,
   Users,
 } from "lucide-react";
+import { DEMO_BRAND } from "@/config/demo-brand";
 
 interface NavLink {
   href: string;
@@ -139,7 +140,10 @@ export function AdminSidebar() {
           </span>
           <div>
             <p className="text-xs text-zinc-500">管理モード</p>
-            <p className="text-sm font-bold text-zinc-900">現場ポケット</p>
+            <p className="text-sm font-bold text-zinc-900">
+              {DEMO_BRAND.productName}{" "}
+              <span className="text-primary">{DEMO_BRAND.productCode}</span>
+            </p>
           </div>
         </div>
         <button

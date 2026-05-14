@@ -37,7 +37,7 @@ export function ModeHeader({ title, subtitle, current }: ModeHeaderProps) {
             PC管理
           </Link>
           <Link
-            href="/report"
+            href="/m/worker"
             className={`inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium ${
               current === "report"
                 ? "bg-primary text-primary-foreground"
@@ -45,7 +45,7 @@ export function ModeHeader({ title, subtitle, current }: ModeHeaderProps) {
             }`}
           >
             <MessageSquareWarning className="h-4 w-4" />
-            現場画面（操作側）
+            現場画面（スマホ）
           </Link>
         </div>
       </div>

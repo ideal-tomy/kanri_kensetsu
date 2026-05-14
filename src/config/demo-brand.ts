@@ -3,8 +3,8 @@
  */
 export const DEMO_BRAND = {
   companyName: "〇〇工業",
-  /** インフォグラフィック準拠のプロダクト名（デモ） */
-  productName: "現場",
-  productCode: "GEMPO",
+  /** プロダクト分類（建設現場向けアプリ） */
+  productName: "建設現場向けアプリ",
+  productCode: "GENPO",
   tagline: "現場・事務所、どこからでもアクセスできる！",
 } as const;
