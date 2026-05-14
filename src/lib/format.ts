@@ -15,4 +15,4 @@ export const generateAutoPhotoName = (
   contentTag: string,
   date = new Date(),
 ): string =>
-  `${DEMO_BRAND.companyName}_${projectName}_${formatYmd(date)}_${contentTag}.jpg`;
+  `${DEMO_BRAND.productCode}_${projectName}_${formatYmd(date)}_${contentTag}.jpg`;

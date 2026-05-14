@@ -15,7 +15,7 @@ export function ModeHeader({ title, subtitle, current }: ModeHeaderProps) {
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-3">
         <div>
           <p className="text-xs text-zinc-500">
-            {DEMO_BRAND.companyName} {DEMO_BRAND.productName}{" "}
+            {DEMO_BRAND.productName}{" "}
             <span className="font-medium text-primary">{DEMO_BRAND.productCode}</span>
           </p>
           <p className="mt-1 inline-flex rounded-full bg-primary-muted px-2 py-0.5 text-xs font-semibold text-primary">

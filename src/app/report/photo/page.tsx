@@ -40,7 +40,7 @@ export default function ReportPhotoPage() {
 
         <section className="rounded-lg border border-zinc-200 bg-white p-4 text-sm text-zinc-700">
           <p>
-            命名ルール: {DEMO_BRAND.companyName}_{"{現場名}"}_{"{YYYYMMDD}"}_
+            命名ルール: {DEMO_BRAND.productCode}_{"{現場名}"}_{"{YYYYMMDD}"}_
             {"{内容}"}.jpg
           </p>
           <p>デモ例: {todayName}</p>

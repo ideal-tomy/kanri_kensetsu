@@ -78,7 +78,7 @@ export default function DailyReportPage() {
                 </label>
               </div>
               <p className="mt-2 text-xs text-zinc-600">
-                命名: {DEMO_BRAND.companyName}_新宿現場_YYYYMMDD_{item.label}.jpg
+                命名: {DEMO_BRAND.productCode}_新宿現場_YYYYMMDD_{item.label}.jpg
               </p>
               {uploaded[item.label] ? (
                 <p className="mt-1 text-sm font-semibold text-primary">
