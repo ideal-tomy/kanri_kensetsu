@@ -210,10 +210,16 @@ export function WeekCalendar({
       </div>
 
       <div className="mt-3 overflow-x-auto md:overflow-x-auto">
-        <table className="w-full min-w-[640px] border-collapse text-sm">
+        <table className="w-full min-w-[720px] table-fixed border-collapse text-sm md:table-auto">
+          <colgroup>
+            <col className="w-[7.5rem] md:w-auto" />
+            {days.map((d) => (
+              <col key={d.ymd} className="w-[5.25rem] md:w-auto" />
+            ))}
+          </colgroup>
           <thead>
             <tr>
-              <th className="sticky left-0 z-10 max-w-[6.5rem] border-b border-zinc-200 bg-white px-1 py-2 text-left md:max-w-none md:bg-transparent">
+              <th className="sticky left-0 z-10 border-b border-zinc-200 bg-white px-2 py-2 text-left md:bg-transparent">
                 現場
               </th>
               {days.map((d) => (
@@ -232,8 +238,11 @@ export function WeekCalendar({
           <tbody>
             {sites.map((site) => (
               <tr key={site.id}>
-                <td className="sticky left-0 z-10 max-w-[6.5rem] border-b border-zinc-100 bg-white px-1 py-2 align-top font-semibold text-zinc-800 md:max-w-none md:bg-transparent">
-                  <span className="line-clamp-2 md:line-clamp-none" title={site.name}>
+                <td className="sticky left-0 z-10 border-b border-zinc-100 bg-white px-2 py-2 align-top font-semibold text-zinc-800 md:bg-transparent">
+                  <span
+                    className="block overflow-hidden text-ellipsis whitespace-normal break-words leading-snug [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] md:[-webkit-line-clamp:unset]"
+                    title={site.name}
+                  >
                     {site.name}
                   </span>
                 </td>
@@ -244,7 +253,7 @@ export function WeekCalendar({
                   return (
                     <td
                       key={d.ymd}
-                      className={`min-w-[88px] border-b border-zinc-100 px-1 py-2 align-top ${
+                      className={`border-b border-zinc-100 px-1 py-2 align-top md:min-w-[88px] ${
                         d.isToday ? "bg-orange-50/50" : ""
                       }`}
                     >
