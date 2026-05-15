@@ -63,7 +63,7 @@ export function QuantityInput({ unit, current, planned, onAdd }: Props) {
   return (
     <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-3">
       <p className="text-sm font-semibold text-zinc-700">
-        できた数を入れてね
+        作業数を入力してください
         {unit ? <span className="ml-1 text-zinc-500">（{unit}）</span> : null}
         {remaining != null ? (
           <span className="ml-2 text-zinc-500">のこり {remaining}{unit ?? ""}</span>
