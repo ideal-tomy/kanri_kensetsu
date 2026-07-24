@@ -124,6 +124,8 @@ export type PhotoReport = {
   title?: string;
   note?: string;
   storagePath: string;
+  /** ギャラリー表示用。`/images/...` または投稿時の data URL */
+  imageUrl?: string;
   createdAt: string;
   /** 外壁・サッシデモ：報告書の写真枠ID */
   photoSlotId?: string;
@@ -352,14 +354,15 @@ const seedAssigns: SeedAssign[] = [
     siteId: "site-1",
     siteName: "新宿駅西口再開発A棟",
     shift: "day_full",
-    days: [0, 1, 3, 4],
+    // 土日も含め、いつデモしても投稿できる
+    days: [0, 1, 2, 3, 4, 5, 6],
   },
   {
     userName: "佐藤さん",
     siteId: "site-1",
     siteName: "新宿駅西口再開発A棟",
     shift: "day_full",
-    days: [0, 1, 3],
+    days: [0, 1, 2, 3, 4, 5, 6],
   },
   {
     userName: "鈴木さん",
@@ -427,16 +430,26 @@ const daysAgoIso = (days: number, hour = 9): string => {
   return d.toISOString();
 };
 
+const DEMO_IMAGE = {
+  morningBriefing: "/images/morning_briefing.png",
+  siteMorning: "/images/site_morning.png",
+  scaffoldCheck: "/images/scaffold_check.png",
+  wallBoards8: "/images/wall_boards_8.png",
+  floorFinish2: "/images/floor_finish_2.png",
+  northWall: "/images/north_wall.png",
+} as const;
+
 const initialPhotoReports: PhotoReport[] = [
   {
     id: nextId("photo"),
     siteId: "site-1",
     userName: "田中さん",
     category: "progress",
-    fileName: "exterior_north.jpg",
+    fileName: "north_wall.png",
     title: "北面 外壁ボード貼り 進捗",
     note: "10枚目まで完了。明日12枚張り終え予定。",
     storagePath: "/photos/新宿駅西口再開発A棟/today/progress/exterior_north.jpg",
+    imageUrl: DEMO_IMAGE.northWall,
     createdAt: hoursAgoIso(2),
   },
   {
@@ -444,8 +457,9 @@ const initialPhotoReports: PhotoReport[] = [
     siteId: "site-1",
     userName: "田中さん",
     category: "regular",
-    fileName: "morning_briefing.jpg",
+    fileName: "morning_briefing.png",
     storagePath: "/photos/新宿駅西口再開発A棟/today/regular/morning_briefing.jpg",
+    imageUrl: DEMO_IMAGE.morningBriefing,
     createdAt: hoursAgoIso(6),
   },
   {
@@ -453,10 +467,11 @@ const initialPhotoReports: PhotoReport[] = [
     siteId: "site-1",
     userName: "佐藤さん",
     category: "progress",
-    fileName: "scaffold_check.jpg",
+    fileName: "scaffold_check.png",
     title: "足場の固定確認",
     note: "金具の緩みなし。",
     storagePath: "/photos/新宿駅西口再開発A棟/today/progress/scaffold_check.jpg",
+    imageUrl: DEMO_IMAGE.scaffoldCheck,
     createdAt: hoursAgoIso(4),
   },
   {
@@ -464,8 +479,9 @@ const initialPhotoReports: PhotoReport[] = [
     siteId: "site-2",
     userName: "鈴木さん",
     category: "regular",
-    fileName: "site_morning.jpg",
+    fileName: "site_morning.png",
     storagePath: "/photos/大手町オフィスタワー改修/today/regular/site_morning.jpg",
+    imageUrl: DEMO_IMAGE.siteMorning,
     createdAt: hoursAgoIso(8),
   },
   {
@@ -477,6 +493,7 @@ const initialPhotoReports: PhotoReport[] = [
     title: "1階壁面塗装 完了",
     note: "想定より早く完了。",
     storagePath: "/photos/大手町オフィスタワー改修/today/progress/wall_paint.jpg",
+    // 未用意のためプレースホルダ。他現場の朝礼写真を仮置きしない
     createdAt: hoursAgoIso(1),
   },
   {
@@ -486,6 +503,7 @@ const initialPhotoReports: PhotoReport[] = [
     category: "regular",
     fileName: "cmansion_morning.jpg",
     storagePath: "/photos/豊洲オフィスレジデンス/today/regular/cmansion_morning.jpg",
+    // 未用意のためプレースホルダ
     createdAt: hoursAgoIso(7),
   },
   {
@@ -496,6 +514,7 @@ const initialPhotoReports: PhotoReport[] = [
     fileName: "form_setup.jpg",
     title: "型枠調整 6/20箇所",
     storagePath: "/photos/豊洲オフィスレジデンス/today/progress/form_setup.jpg",
+    // 未用意のためプレースホルダ
     createdAt: hoursAgoIso(3),
   },
   {
@@ -503,9 +522,10 @@ const initialPhotoReports: PhotoReport[] = [
     siteId: "site-1",
     userName: "田中さん",
     category: "progress",
-    fileName: "yesterday_wall.jpg",
+    fileName: "wall_boards_8.png",
     title: "外壁ボード貼り 8枚完了",
     storagePath: "/photos/新宿駅西口再開発A棟/yesterday/progress/yesterday_wall.jpg",
+    imageUrl: DEMO_IMAGE.wallBoards8,
     createdAt: daysAgoIso(1, 16),
   },
   {
@@ -513,9 +533,10 @@ const initialPhotoReports: PhotoReport[] = [
     siteId: "site-2",
     userName: "鈴木さん",
     category: "progress",
-    fileName: "yesterday_floor.jpg",
+    fileName: "floor_finish_2.png",
     title: "床仕上げ 2区画完了",
     storagePath: "/photos/大手町オフィスタワー改修/yesterday/progress/yesterday_floor.jpg",
+    imageUrl: DEMO_IMAGE.floorFinish2,
     createdAt: daysAgoIso(1, 17),
   },
   {
@@ -906,6 +927,7 @@ export function createPhotoReport(input: {
   fileName: string;
   title?: string;
   note?: string;
+  imageUrl?: string;
   photoSlotId?: string;
   phaseId?: string;
   phaseLabel?: string;
@@ -960,6 +982,7 @@ export function createPhotoReport(input: {
     title,
     note: input.note?.trim(),
     storagePath,
+    imageUrl: input.imageUrl?.trim() || undefined,
     createdAt: todayIso(),
     photoSlotId,
     phaseId,

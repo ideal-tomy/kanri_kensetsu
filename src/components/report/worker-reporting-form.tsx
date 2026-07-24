@@ -41,28 +41,46 @@ export function WorkerReportingForm({ category }: { category: Category }) {
     [siteId, sites],
   );
 
+  const readFileAsDataUrl = (file: File) =>
+    new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result));
+      reader.onerror = () => reject(new Error("画像の読み込みに失敗しました"));
+      reader.readAsDataURL(file);
+    });
+
   const submitPhoto = async () => {
     setMessage("");
-    const res = await fetch("/api/photos", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        siteId,
-        category,
-        fileName: selectedFile?.name,
-        title: photoTitle,
-        note: photoNote,
-      }),
-    });
-    const data = await res.json();
-    if (!res.ok) {
-      setMessage(data.message ?? "写真投稿に失敗しました");
+    if (!selectedFile) {
+      setMessage("写真ファイルを選んでください");
       return;
     }
-    setMessage(`${CATEGORY_LABEL[category]}を投稿しました`);
-    setSelectedFile(null);
-    setPhotoTitle("");
-    setPhotoNote("");
+    try {
+      const imageUrl = await readFileAsDataUrl(selectedFile);
+      const res = await fetch("/api/photos", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          siteId,
+          category,
+          fileName: selectedFile.name,
+          title: photoTitle,
+          note: photoNote,
+          imageUrl,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setMessage(data.message ?? "写真投稿に失敗しました");
+        return;
+      }
+      setMessage(`${CATEGORY_LABEL[category]}を投稿しました`);
+      setSelectedFile(null);
+      setPhotoTitle("");
+      setPhotoNote("");
+    } catch {
+      setMessage("画像の読み込みに失敗しました");
+    }
   };
 
   const submitTextReport = async () => {

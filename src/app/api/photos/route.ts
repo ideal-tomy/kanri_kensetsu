@@ -31,6 +31,7 @@ export async function POST(request: Request) {
     fileName?: string;
     title?: string;
     note?: string;
+    imageUrl?: string;
   };
 
   if (!body.siteId) {
@@ -46,6 +47,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: "進捗報告では画像タイトルが必要です" }, { status: 400 });
   }
 
+  const imageUrl = body.imageUrl?.trim();
+  if (imageUrl && !imageUrl.startsWith("data:image/") && !imageUrl.startsWith("/images/")) {
+    return NextResponse.json({ message: "画像データが不正です" }, { status: 400 });
+  }
+
   const photo = createPhotoReport({
     siteId: body.siteId,
     userName: user.name,
@@ -53,6 +59,7 @@ export async function POST(request: Request) {
     fileName: body.fileName.trim(),
     title: body.title?.trim(),
     note: body.note?.trim(),
+    imageUrl,
   });
 
   // shadow write: Supabase 設定がある場合のみ送る。失敗してもアプリは止めない。

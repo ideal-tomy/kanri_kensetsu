@@ -154,9 +154,18 @@ function PhotoCard({
         >
           {CATEGORY_LABEL[photo.category]}
         </span>
-        <div className="flex h-full w-full items-center justify-center text-zinc-400">
-          <ImageIcon className="h-8 w-8" aria-hidden />
-        </div>
+        {photo.imageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element -- demo store may use /images or data URLs
+          <img
+            src={photo.imageUrl}
+            alt={photo.title ?? photo.fileName}
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center text-zinc-400">
+            <ImageIcon className="h-8 w-8" aria-hidden />
+          </div>
+        )}
       </div>
       <div className="p-3">
         {photo.title ? (
