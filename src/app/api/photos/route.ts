@@ -1,8 +1,16 @@
 import { NextResponse } from "next/server";
 import { requireSession } from "@/lib/auth/api";
 import {
+  appendPersistedNotification,
+  appendPersistedPhoto,
+} from "@/lib/persist/demo-events";
+import { hydrateDemoEvents } from "@/lib/persist/hydrate";
+import { isAllowedImageUrl } from "@/lib/persist/image-url";
+import {
   createPhotoReport,
+  getCompanyCodeForSite,
   getPhotoReportsForUser,
+  state,
   type PhotoCategory,
 } from "@/lib/prototype-store";
 import { shadowInsertPhotoReport } from "@/lib/db/photo-reports";
@@ -12,6 +20,8 @@ const VALID_CATEGORIES: PhotoCategory[] = ["regular", "progress"];
 export async function GET(request: Request) {
   const user = requireSession(request);
   if (user instanceof NextResponse) return user;
+
+  await hydrateDemoEvents(user.companyCode);
 
   const { searchParams } = new URL(request.url);
   const category = searchParams.get("category") as PhotoCategory | null;
@@ -48,9 +58,17 @@ export async function POST(request: Request) {
   }
 
   const imageUrl = body.imageUrl?.trim();
-  if (imageUrl && !imageUrl.startsWith("data:image/") && !imageUrl.startsWith("/images/")) {
-    return NextResponse.json({ message: "画像データが不正です" }, { status: 400 });
+  if (!imageUrl || !isAllowedImageUrl(imageUrl)) {
+    return NextResponse.json(
+      {
+        message:
+          "画像はサンプルから選ぶか、Blob アップロード後の URL を指定してください（/images/...）",
+      },
+      { status: 400 },
+    );
   }
+
+  await hydrateDemoEvents(user.companyCode);
 
   const photo = createPhotoReport({
     siteId: body.siteId,
@@ -62,7 +80,14 @@ export async function POST(request: Request) {
     imageUrl,
   });
 
-  // shadow write: Supabase 設定がある場合のみ送る。失敗してもアプリは止めない。
+  const company = getCompanyCodeForSite(body.siteId);
+  const notification = state.notifications.find((n) => n.photoId === photo.id);
+
+  await Promise.all([
+    appendPersistedPhoto(company, photo),
+    notification ? appendPersistedNotification(company, notification) : Promise.resolve(),
+  ]);
+
   shadowInsertPhotoReport(photo).catch((error) => {
     console.error("shadowInsertPhotoReport failed", error);
   });

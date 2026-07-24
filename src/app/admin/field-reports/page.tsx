@@ -21,6 +21,7 @@ import {
   getRecentActivities,
 } from "@/lib/admin-stats";
 import { getPhotoReportsForUser, state } from "@/lib/prototype-store";
+import { hydrateDemoEvents } from "@/lib/persist/hydrate";
 import { ADMIN_COLORS } from "@/lib/admin-theme";
 import {
   generatedReportPreviews,
@@ -32,11 +33,12 @@ import {
 
 export default async function FieldReportsPage() {
   const adminUser = await requireAdminSession();
+  await hydrateDemoEvents(adminUser.companyCode);
   const livePhotos = getPhotoReportsForUser(adminUser);
   const siteNameMap = buildSiteNameMap();
   const trend = getDailyTrend(14);
   const ranking = getPhotoUploaderRanking(livePhotos, 5);
-  const activities = getRecentActivities(8);
+  const activities = getRecentActivities(8, adminUser.companyCode);
 
   const today = new Date().toISOString().slice(0, 10);
   const todayCount = livePhotos.filter((p) => p.createdAt.slice(0, 10) === today).length;
@@ -57,6 +59,7 @@ export default async function FieldReportsPage() {
     timestamp: a.timestamp,
     type: a.type,
     severity: a.type === "notification" ? "warning" : "info",
+    href: a.href,
   }));
 
   return (
@@ -134,6 +137,7 @@ export default async function FieldReportsPage() {
             siteNameById={siteNameMap}
             showFilter
             columns={3}
+            detailHrefTemplate="/admin/reports/photos/{id}"
           />
         </ChartCard>
 

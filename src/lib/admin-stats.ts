@@ -114,7 +114,7 @@ export function getPhotoUploaderRanking(photos: PhotoReport[], limit = 5) {
     .slice(0, limit);
 }
 
-export function getRecentActivities(limit = 8) {
+export function getRecentActivities(limit = 8, companyCode = "YMD35") {
   const items: Array<{
     id: string;
     type: "photo" | "report" | "task" | "notification";
@@ -122,22 +122,24 @@ export function getRecentActivities(limit = 8) {
     body?: string;
     timestamp: string;
     meta?: string;
+    href?: string;
   }> = [];
 
   for (const p of state.photoReports.slice(0, 10)) {
     items.push({
-      id: p.id,
+      id: `photo-${p.id}`,
       type: "photo",
       title: p.title ?? `${p.userName}さんが写真を投稿`,
       body: p.note ?? p.fileName,
       timestamp: p.createdAt,
       meta: `${p.userName} / ${p.category === "regular" ? "定例" : "進捗"}`,
+      href: `/admin/reports/photos/${p.id}`,
     });
   }
   for (const tu of state.taskUpdates.slice(0, 10)) {
     const task = state.tasks.find((t) => t.id === tu.taskId);
     items.push({
-      id: tu.id,
+      id: `task-${tu.id}`,
       type: "task",
       title: task ? `${task.title}：${tu.statusTo ?? "更新"}` : "タスク更新",
       body:
@@ -150,21 +152,27 @@ export function getRecentActivities(limit = 8) {
   }
   for (const r of state.reports.slice(0, 10)) {
     items.push({
-      id: r.id,
+      id: `report-${r.id}`,
       type: "report",
       title: `${r.authorName}さんの日報`,
       body: r.rawText.slice(0, 60),
       timestamp: r.createdAt,
+      href: `/admin/reports/${r.id}`,
     });
   }
-  for (const n of state.notifications.slice(0, 10)) {
+  for (const n of state.notifications.filter(
+    (item) =>
+      (item.audience === "admin" || !item.audience) &&
+      (item.companyCode ?? "YMD35") === companyCode,
+  ).slice(0, 10)) {
     items.push({
-      id: n.id,
+      id: `ntf-${n.id}`,
       type: "notification",
       title: n.title,
       body: n.body,
       timestamp: n.createdAt,
       meta: n.userName,
+      href: n.href,
     });
   }
 

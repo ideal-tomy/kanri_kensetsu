@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { DEMO_SAMPLE_IMAGES } from "@/lib/persist/image-url";
 
 type Site = { id: string; name: string };
 type Category = "regular" | "progress";
@@ -18,11 +19,14 @@ const CATEGORY_GUIDE: Record<Category, string> = {
 export function WorkerReportingForm({ category }: { category: Category }) {
   const [sites, setSites] = useState<Site[]>([]);
   const [siteId, setSiteId] = useState("");
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedSampleId, setSelectedSampleId] = useState<string>(DEMO_SAMPLE_IMAGES[0].id);
+  const [uploaded, setUploaded] = useState<{ imageUrl: string; fileName: string } | null>(null);
+  const [blobEnabled] = useState(true);
   const [photoTitle, setPhotoTitle] = useState("");
   const [photoNote, setPhotoNote] = useState("");
   const [rawText, setRawText] = useState("");
   const [message, setMessage] = useState("");
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     fetch("/api/sites")
@@ -41,46 +45,67 @@ export function WorkerReportingForm({ category }: { category: Category }) {
     [siteId, sites],
   );
 
-  const readFileAsDataUrl = (file: File) =>
-    new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(String(reader.result));
-      reader.onerror = () => reject(new Error("画像の読み込みに失敗しました"));
-      reader.readAsDataURL(file);
-    });
+  const selectedSample = DEMO_SAMPLE_IMAGES.find((s) => s.id === selectedSampleId);
+
+  const resolvedImage = uploaded ??
+    (selectedSample
+      ? { imageUrl: selectedSample.imageUrl, fileName: selectedSample.fileName }
+      : null);
+
+  const onFileChange = async (file: File | null) => {
+    setMessage("");
+    if (!file) return;
+    if (!blobEnabled) {
+      setMessage("ファイルアップロード未設定のため、下のサンプル画像から選んでください");
+      return;
+    }
+    setUploading(true);
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      const res = await fetch("/api/photos/upload", { method: "POST", body: form });
+      const data = await res.json();
+      if (!res.ok) {
+        setMessage(data.message ?? "アップロードに失敗しました。サンプル画像を選んでください");
+        setUploading(false);
+        return;
+      }
+      setUploaded({ imageUrl: data.imageUrl, fileName: data.fileName ?? file.name });
+      setMessage("画像をアップロードしました");
+    } catch {
+      setMessage("アップロードに失敗しました。サンプル画像を選んでください");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const submitPhoto = async () => {
     setMessage("");
-    if (!selectedFile) {
-      setMessage("写真ファイルを選んでください");
+    if (!resolvedImage) {
+      setMessage("写真を選んでください");
       return;
     }
-    try {
-      const imageUrl = await readFileAsDataUrl(selectedFile);
-      const res = await fetch("/api/photos", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          siteId,
-          category,
-          fileName: selectedFile.name,
-          title: photoTitle,
-          note: photoNote,
-          imageUrl,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setMessage(data.message ?? "写真投稿に失敗しました");
-        return;
-      }
-      setMessage(`${CATEGORY_LABEL[category]}を投稿しました`);
-      setSelectedFile(null);
-      setPhotoTitle("");
-      setPhotoNote("");
-    } catch {
-      setMessage("画像の読み込みに失敗しました");
+    const res = await fetch("/api/photos", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        siteId,
+        category,
+        fileName: resolvedImage.fileName,
+        title: photoTitle,
+        note: photoNote,
+        imageUrl: resolvedImage.imageUrl,
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      setMessage(data.message ?? "写真投稿に失敗しました");
+      return;
     }
+    setMessage(`${CATEGORY_LABEL[category]}を投稿しました`);
+    setPhotoTitle("");
+    setPhotoNote("");
+    setUploaded(null);
   };
 
   const submitTextReport = async () => {
@@ -95,7 +120,7 @@ export function WorkerReportingForm({ category }: { category: Category }) {
       setMessage(data.message ?? "報告送信に失敗しました");
       return;
     }
-    setMessage("テキスト報告を送信しました");
+    setMessage("テキスト報告を送信しました。管理画面の「最新の動き」から確認できます");
     setRawText("");
   };
 
@@ -126,15 +151,46 @@ export function WorkerReportingForm({ category }: { category: Category }) {
         <p className="mt-1 text-sm font-semibold text-zinc-800">
           投稿先：{selectedSite?.name ?? "現場未選択"} / {CATEGORY_LABEL[category]}
         </p>
+
+        <p className="mt-3 text-sm font-bold text-zinc-900">サンプル画像から選ぶ（推奨）</p>
+        <div className="mt-2 grid grid-cols-3 gap-2">
+          {DEMO_SAMPLE_IMAGES.map((sample) => (
+            <button
+              key={sample.id}
+              type="button"
+              onClick={() => {
+                setSelectedSampleId(sample.id);
+                setUploaded(null);
+              }}
+              className={`overflow-hidden rounded-lg border-2 ${
+                !uploaded && selectedSampleId === sample.id
+                  ? "border-primary"
+                  : "border-zinc-200"
+              }`}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={sample.imageUrl} alt={sample.label} className="aspect-video w-full object-cover" />
+              <span className="block truncate px-1 py-1 text-[10px] font-semibold text-zinc-700">
+                {sample.label}
+              </span>
+            </button>
+          ))}
+        </div>
+
+        <p className="mt-3 text-sm font-bold text-zinc-900">またはファイルをアップロード</p>
         <input
           type="file"
           accept="image/*"
-          onChange={(e) => setSelectedFile(e.target.files?.[0] ?? null)}
+          disabled={uploading}
+          onChange={(e) => onFileChange(e.target.files?.[0] ?? null)}
           className="mt-2 block min-h-11 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm font-semibold text-zinc-900"
         />
-        {selectedFile ? (
-          <p className="mt-1 text-sm font-semibold text-zinc-900">選択中: {selectedFile.name}</p>
+        {resolvedImage ? (
+          <p className="mt-1 text-sm font-semibold text-zinc-900">
+            選択中: {resolvedImage.fileName}
+          </p>
         ) : null}
+
         {category === "progress" ? (
           <input
             value={photoTitle}
@@ -153,9 +209,10 @@ export function WorkerReportingForm({ category }: { category: Category }) {
         <button
           type="button"
           onClick={submitPhoto}
-          className="mt-2 min-h-11 w-full rounded-lg bg-zinc-900 text-base font-bold text-white"
+          disabled={uploading}
+          className="mt-2 min-h-11 w-full rounded-lg bg-zinc-900 text-base font-bold text-white disabled:opacity-60"
         >
-          写真を投稿
+          {uploading ? "アップロード中…" : "写真を投稿"}
         </button>
       </div>
 

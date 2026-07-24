@@ -7,6 +7,7 @@ import {
   FileText,
   MessageSquare,
 } from "lucide-react";
+import Link from "next/link";
 
 export type TimelineSeverity = "info" | "warning" | "danger" | "success";
 
@@ -19,6 +20,7 @@ export interface TimelineItem {
   type?: "photo" | "report" | "task" | "notification" | "alert" | "chat" | "custom";
   severity?: TimelineSeverity;
   icon?: LucideIcon;
+  href?: string;
 }
 
 interface TimelineListProps {
@@ -61,8 +63,8 @@ export function TimelineList({
       {items.map((item) => {
         const Icon = item.icon ?? (item.type ? TYPE_ICON[item.type] : Bell);
         const severity = item.severity ?? "info";
-        return (
-          <li key={item.id} className="flex gap-3">
+        const body = (
+          <>
             <div className="flex flex-col items-center">
               <div
                 className={`flex h-9 w-9 items-center justify-center rounded-full ${SEVERITY_BG[severity]}`}
@@ -84,7 +86,25 @@ export function TimelineList({
               {item.meta ? (
                 <p className="mt-1 text-xs text-zinc-500">{item.meta}</p>
               ) : null}
+              {item.href ? (
+                <p className="mt-1 text-xs font-semibold text-primary">詳細を開く →</p>
+              ) : null}
             </div>
+          </>
+        );
+
+        return (
+          <li key={item.id}>
+            {item.href ? (
+              <Link
+                href={item.href}
+                className="flex gap-3 rounded-lg transition hover:bg-zinc-50"
+              >
+                {body}
+              </Link>
+            ) : (
+              <div className="flex gap-3">{body}</div>
+            )}
           </li>
         );
       })}

@@ -11,12 +11,14 @@ import {
   getDailyTrend,
 } from "@/lib/admin-stats";
 import { getPhotoReportsForUser, state } from "@/lib/prototype-store";
+import { hydrateDemoEvents } from "@/lib/persist/hydrate";
 import { ADMIN_COLORS } from "@/lib/admin-theme";
 import { aiLogs } from "@/data/mock";
 import { aiLogTypeClasses, aiLogTypeLabel } from "@/lib/ai-demo";
 
 export default async function PhotosHubPage() {
   const adminUser = await requireAdminSession();
+  await hydrateDemoEvents(adminUser.companyCode);
   const photos = getPhotoReportsForUser(adminUser);
   const siteNameMap = buildSiteNameMap();
   const trend = getDailyTrend(14);

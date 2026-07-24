@@ -1,6 +1,7 @@
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import { isSupabaseServerWriteable } from "@/lib/supabase/config";
 import { state } from "@/lib/prototype-store";
+import { parseWorkReportText } from "@/lib/report/work-report-template";
 import type { ReportTemplateRecord } from "@/types/report-template";
 
 export type CollectPeriod = {
@@ -58,9 +59,11 @@ export function collectReportDataFromPrototype(
     (p) => `${p.userName}｜${p.title ?? "進捗"}｜${p.storagePath}`,
   );
 
-  const reports = state.reports.filter(
-    (r) => r.siteId === siteId && inPeriod(r.createdAt, period.periodStart, period.periodEnd),
-  );
+  const reports = state.reports
+    .filter(
+      (r) => r.siteId === siteId && inPeriod(r.createdAt, period.periodStart, period.periodEnd),
+    )
+    .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
 
   const reports_snippet = reports.map((r) => `・${r.authorName}: ${r.rawText}`).join("\n").slice(0, 4000);
 
@@ -75,6 +78,25 @@ export function collectReportDataFromPrototype(
     .map((p) => `${p.name}: ${p.progressPct}%`)
     .join(" / ");
 
+  const latest = reports[0];
+  let workSections = {
+    subject: `【作業報告】${siteName}`,
+    basic: "",
+    today_work: summary,
+    notes: "",
+    tomorrow: "",
+  };
+  if (latest) {
+    const parsed = parseWorkReportText(latest.rawText, siteName);
+    workSections = {
+      subject: parsed.subject,
+      basic: parsed.basic,
+      today_work: parsed.today || summary,
+      notes: parsed.notes,
+      tomorrow: parsed.tomorrow,
+    };
+  }
+
   const base: Record<string, unknown> = {
     site_name: siteName,
     site_address: "",
@@ -85,7 +107,11 @@ export function collectReportDataFromPrototype(
     summary,
     reports_snippet,
     photo_lines: template.category === "safety" ? photo_lines_progress : photo_lines_recent,
-    notes: "",
+    notes: workSections.notes,
+    subject: workSections.subject,
+    basic: workSections.basic,
+    today_work: workSections.today_work,
+    tomorrow: workSections.tomorrow,
     completed_tasks,
     active_tasks,
     phases_summary,

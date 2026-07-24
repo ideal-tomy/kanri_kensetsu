@@ -1,17 +1,22 @@
 import { notFound } from "next/navigation";
 import { PageShell } from "@/components/layout/page-shell";
-import { projects, reportPhotos, workers } from "@/data/mock";
+import { requireAdminSession } from "@/lib/auth/admin";
+import { hydrateDemoEvents } from "@/lib/persist/hydrate";
+import { getPhotoById, state } from "@/lib/prototype-store";
+import { CATEGORY_LABEL } from "@/lib/admin-theme";
 
 interface Props {
   params: Promise<{ id: string }>;
 }
 
 export default async function PhotoDetailPage({ params }: Props) {
+  const adminUser = await requireAdminSession();
+  await hydrateDemoEvents(adminUser.companyCode);
   const { id } = await params;
-  const photo = reportPhotos.find((item) => item.id === id);
+  const photo = getPhotoById(id);
   if (!photo) return notFound();
-  const project = projects.find((p) => p.id === photo.projectId);
-  const worker = workers.find((w) => w.id === photo.uploadedByWorkerId);
+
+  const site = state.sites.find((s) => s.id === photo.siteId);
 
   return (
     <PageShell
@@ -25,28 +30,47 @@ export default async function PhotoDetailPage({ params }: Props) {
         { label: "写真詳細" },
       ]}
     >
-      <section className="rounded-lg border border-zinc-200 bg-white p-5">
-        <p className="text-sm text-zinc-500">案件</p>
-        <p className="font-semibold">{project?.projectName}</p>
-        <p className="mt-2 text-sm text-zinc-500">撮影者</p>
-        <p>{worker?.name}</p>
-        <p className="mt-2 text-sm text-zinc-500">元ファイル名</p>
-        <p>{photo.originalFileName}</p>
-        <p className="mt-2 text-sm text-zinc-500">AI命名後</p>
-        <p className="font-medium text-orange-700">{photo.renamedFileName}</p>
-        <div className="mt-5 space-y-2 border-t border-zinc-100 pt-4">
-          <p className="flex items-center gap-2 text-sm font-medium text-emerald-800">
-            <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-xs">
-              ✓
-            </span>
-            指定フォルダに保存しました
+      <section className="mt-4 overflow-hidden rounded-xl border border-zinc-200 bg-white">
+        <div className="aspect-video bg-zinc-100">
+          {photo.imageUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={photo.imageUrl}
+              alt={photo.title ?? photo.fileName}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center text-sm text-zinc-500">
+              画像なし
+            </div>
+          )}
+        </div>
+        <div className="space-y-2 p-5 text-sm text-zinc-700">
+          <p>
+            <span className="font-semibold text-zinc-900">タイトル:</span>{" "}
+            {photo.title ?? photo.fileName}
           </p>
-          <p className="flex items-center gap-2 text-sm font-medium text-emerald-800">
-            <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-xs">
-              ✓
-            </span>
-            報告書類の指定個所に、画像を挿入しました
+          <p>
+            <span className="font-semibold text-zinc-900">カテゴリ:</span>{" "}
+            {CATEGORY_LABEL[photo.category]}
           </p>
+          <p>
+            <span className="font-semibold text-zinc-900">現場:</span>{" "}
+            {site?.name ?? photo.siteId}
+          </p>
+          <p>
+            <span className="font-semibold text-zinc-900">投稿者:</span> {photo.userName}
+          </p>
+          <p>
+            <span className="font-semibold text-zinc-900">日時:</span>{" "}
+            {new Date(photo.createdAt).toLocaleString("ja-JP")}
+          </p>
+          {photo.note ? (
+            <p>
+              <span className="font-semibold text-zinc-900">補足:</span> {photo.note}
+            </p>
+          ) : null}
+          <p className="text-xs text-zinc-500">保管パス: {photo.storagePath}</p>
         </div>
       </section>
     </PageShell>

@@ -26,6 +26,7 @@ import {
   getTodayLiveStats,
 } from "@/lib/admin-stats";
 import { ADMIN_COLORS } from "@/lib/admin-theme";
+import { hydrateDemoEvents } from "@/lib/persist/hydrate";
 import { state } from "@/lib/prototype-store";
 import { aiLogs } from "@/data/mock";
 import { aiLogTypeClasses, aiLogTypeLabel } from "@/lib/ai-demo";
@@ -33,11 +34,12 @@ import { DEMO_BRAND } from "@/config/demo-brand";
 
 export default async function AdminPage() {
   const adminUser = await requireAdminSession();
+  await hydrateDemoEvents(adminUser.companyCode);
   const stats = getTodayLiveStats();
   const trend = getDailyTrend(14);
   const siteProgressList = getSiteProgressList(state.sites);
   const ranking = getPhotoUploaderRanking(state.photoReports);
-  const recent = getRecentActivities(6);
+  const recent = getRecentActivities(6, adminUser.companyCode);
   const siteNameMap = buildSiteNameMap();
 
   const trendSeries = [
@@ -63,6 +65,7 @@ export default async function AdminPage() {
     timestamp: a.timestamp,
     type: a.type,
     severity: a.type === "notification" ? "warning" : "info",
+    href: a.href,
   }));
 
   const recentPhotos = state.photoReports.slice(0, 8);

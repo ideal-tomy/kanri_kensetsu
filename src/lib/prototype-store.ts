@@ -124,7 +124,7 @@ export type PhotoReport = {
   title?: string;
   note?: string;
   storagePath: string;
-  /** ギャラリー表示用。`/images/...` または投稿時の data URL */
+  /** ギャラリー表示用。`/images/...` または Blob URL */
   imageUrl?: string;
   createdAt: string;
   /** 外壁・サッシデモ：報告書の写真枠ID */
@@ -693,19 +693,29 @@ const initialTaskUpdates: TaskUpdate[] = [
   },
 ];
 
-const initialNotifications: {
+export type DemoNotification = {
   id: string;
   userName: string;
   title: string;
   body: string;
   createdAt: string;
-}[] = [
+  audience?: "admin" | "user";
+  companyCode?: string;
+  href?: string;
+  reportId?: string;
+  photoId?: string;
+};
+
+const initialNotifications: DemoNotification[] = [
   {
     id: nextId("ntf"),
     userName: "鈴木さん",
     title: "雨で作業中断",
     body: "大手町オフィスタワー改修・足場点検が雨のため中断しました",
     createdAt: hoursAgoIso(3),
+    audience: "admin",
+    companyCode: "YMD35",
+    href: "/admin/field-reports",
   },
   {
     id: nextId("ntf"),
@@ -713,6 +723,9 @@ const initialNotifications: {
     title: "進捗報告が届きました",
     body: "新宿駅西口再開発A棟：外壁ボード貼り 10枚完了",
     createdAt: hoursAgoIso(2),
+    audience: "admin",
+    companyCode: "YMD35",
+    href: "/admin/field-reports",
   },
   {
     id: nextId("ntf"),
@@ -720,6 +733,9 @@ const initialNotifications: {
     title: "作業開始",
     body: "豊洲オフィスレジデンス 型枠調整に着手",
     createdAt: hoursAgoIso(7),
+    audience: "admin",
+    companyCode: "YMD35",
+    href: "/admin/field-reports",
   },
 ];
 
@@ -841,7 +857,63 @@ export function getAssignmentsForUser(user: SessionUser) {
   return state.assignments.filter((assignment) => siteIds.has(assignment.siteId));
 }
 
-export function createReport(siteId: string, authorName: string, rawText: string) {
+export function getCompanyCodeForSite(siteId: string): string {
+  return state.sites.find((s) => s.id === siteId)?.companyCode ?? "YMD35";
+}
+
+export function getNotificationsForAdmin(companyCode: string): DemoNotification[] {
+  return state.notifications.filter(
+    (n) =>
+      (n.audience === "admin" || !n.audience) &&
+      (n.companyCode ?? "YMD35") === companyCode,
+  );
+}
+
+export function getReportById(id: string): Report | undefined {
+  return state.reports.find((r) => r.id === id);
+}
+
+export function getPhotoById(id: string): PhotoReport | undefined {
+  return state.photoReports.find((p) => p.id === id);
+}
+
+export function getRelatedPhotosForReport(report: Report, limit = 8): PhotoReport[] {
+  const reportTime = new Date(report.createdAt).getTime();
+  const windowMs = 48 * 60 * 60 * 1000;
+  return state.photoReports
+    .filter((p) => {
+      if (p.siteId !== report.siteId) return false;
+      const t = new Date(p.createdAt).getTime();
+      return Math.abs(t - reportTime) <= windowMs;
+    })
+    .slice(0, limit);
+}
+
+export function upsertReport(report: Report) {
+  const idx = state.reports.findIndex((r) => r.id === report.id);
+  if (idx >= 0) state.reports[idx] = report;
+  else state.reports.unshift(report);
+}
+
+export function upsertPhoto(photo: PhotoReport) {
+  const idx = state.photoReports.findIndex((p) => p.id === photo.id);
+  if (idx >= 0) state.photoReports[idx] = photo;
+  else state.photoReports.unshift(photo);
+}
+
+export function upsertNotification(notification: DemoNotification) {
+  const idx = state.notifications.findIndex((n) => n.id === notification.id);
+  if (idx >= 0) state.notifications[idx] = notification;
+  else state.notifications.unshift(notification);
+}
+
+export function createReport(
+  siteId: string,
+  authorName: string,
+  rawText: string,
+  companyCode?: string,
+) {
+  const company = companyCode ?? getCompanyCodeForSite(siteId);
   const report: Report = {
     id: nextId("report"),
     siteId,
@@ -852,12 +924,17 @@ export function createReport(siteId: string, authorName: string, rawText: string
     status: "sent",
   };
   state.reports.unshift(report);
+  const siteName = state.sites.find((s) => s.id === siteId)?.name ?? siteId;
   state.notifications.unshift({
     id: nextId("ntf"),
     userName: authorName,
     title: "日報が届きました",
-    body: `${authorName}さんが日報を送っています`,
+    body: `${authorName}さん（${siteName}）から日報が届きました`,
     createdAt: todayIso(),
+    audience: "admin",
+    companyCode: company,
+    href: `/admin/reports/${report.id}`,
+    reportId: report.id,
   });
   return report;
 }
@@ -990,6 +1067,19 @@ export function createPhotoReport(input: {
   };
   state.photoReports.unshift(report);
   applyPhotoProgressFromReport(report, input.userName);
+  const company = site?.companyCode ?? "YMD35";
+  const label = title || fileName;
+  state.notifications.unshift({
+    id: nextId("ntf"),
+    userName: input.userName,
+    title: input.category === "progress" ? "進捗写真が届きました" : "定例写真が届きました",
+    body: `${input.userName}さん（${site?.name ?? input.siteId}）：${label}`,
+    createdAt: todayIso(),
+    audience: "admin",
+    companyCode: company,
+    href: `/admin/reports/photos/${report.id}`,
+    photoId: report.id,
+  });
   return report;
 }
 
